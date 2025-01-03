@@ -1,1 +1,2 @@
 [2025-01-01T09:34:04-03:00] feat: enhance decorator with rate limiting
+[2025-01-03T08:45:34-03:00] feat: add email notifications to service
