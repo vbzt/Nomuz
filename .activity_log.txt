@@ -61,3 +61,4 @@
 [2025-01-01T09:34:04-03:00] feat: enhance decorator with rate limiting
 [2025-01-03T08:45:34-03:00] feat: add email notifications to service
 [2025-01-04T13:38:50-03:00] deploy
+[2025-01-07T21:06:03-03:00] mais um fix
