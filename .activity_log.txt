@@ -7,3 +7,4 @@
 [2025-02-19T14:30:35-03:00] feat: add data persistence to repository
 [2025-07-01T01:24:09-03:00] feat: integrate WebSocket into repository
 [2025-07-04T15:45:50-03:00] mais um fix
+[2025-07-04T18:10:38-03:00] update
