@@ -16,3 +16,4 @@
 [2025-07-07T09:12:55-03:00] feat(email): implement real-time updates validation
 [2025-07-07T16:55:41-03:00] feat: controller now supports error handling
 [2025-07-08T01:35:40-03:00] feat: controller now supports background jobs
+[2025-07-08T19:28:40-03:00] refactor: optimize middleware implementation
