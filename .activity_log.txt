@@ -24,3 +24,4 @@
 [2025-07-21T01:35:45-03:00] feat(email): integrate validation pipe for validation logic
 [2025-07-21T23:17:19-03:00] feat: implement user authentication with JWT
 [2025-07-22T08:50:00-03:00] feat: add rate limiting to interceptor
+[2025-07-22T16:34:55-03:00] feat: enhance provider with validation logic
