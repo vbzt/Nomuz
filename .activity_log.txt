@@ -89,3 +89,4 @@
 [2025-07-30T00:11:37-03:00] feat(cache): integrate TypeScript for webhook integration
 [2025-07-30T11:06:42-03:00] feat: add logging system to controller
 [2025-07-31T05:43:04-03:00] feat: implement pagination with validation pipe
+[2025-08-01T13:30:07-03:00] melhorando isso aqui
