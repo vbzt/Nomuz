@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ROLE { 
+  USER
+  LAWYER
+  ADMIN
+}
+
+enum CHAT_ROLE { 
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+
+model User { 
+  id String @id @default(cuid())
+  email String @unique 
+  name String
+  password String
+  role ROLE @default(USER)
+  lawyer_registration String? @unique
+  message Message[]
+  createdAt DateTime @default(now())
+  chat_user ChatUser[]
+}
+
+model Message { 
+  id String @id @default(cuid())
+
+  chat Chat @relation(fields: [chat_id], references: [id])
+  chat_id String
+
+  sender User @relation(fields: [sender_id], references: [id])
+  sender_id String
+
+  content String
+  hash String
+  createdAt DateTime @default(now())
+}
+
+model Chat { 
+  id String @id @default(cuid())
+
+  isGroup Boolean @default(false)
+  name String? 
+  messages Message[]
+  users ChatUser[]
+  createdAt DateTime @default(now())
+}
+
+model ChatUser{ 
+  id String @id @default(cuid())
+
+  user User @relation(fields: [user_id], references: [id])
+  user_id String
+
+  chat Chat @relation(fields: [chat_id], references: [id])
+  chat_id String
+
+  role CHAT_ROLE @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+
+  @@unique([chat_id, user_id])
+}
