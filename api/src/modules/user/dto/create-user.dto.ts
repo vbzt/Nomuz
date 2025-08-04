@@ -23,7 +23,7 @@ export class CreateUserDTO{
   
   @Transform(( { value } ) => value.toUpperCase())
   @IsEnum(ROLE)
-  role: string
+  role: ROLE
 
   @IsOptional()
   @IsString()
