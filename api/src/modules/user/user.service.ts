@@ -10,14 +10,15 @@ export class UserService {
 
   async create(data: CreateUserDTO){ 
     const salt = await bcrypt.genSalt()
-    data.password = await bcrypt.hash(data.password, salt)
-    return this.prismaService.user.create({ data })
+    data.password = await bcrypt.hash( data.password, salt )
+    return this.prismaService.user.create( { data } )
   }
 
+  async read(){ 
+    return this.prismaService.user.findMany()
+  }
 
-
-  checkAdminAcc = ({ email, role }: CreateUserDTO) => { 
-    if(email === env('ADMIN_ACC')) return true
-    return false
+  async readOne(id: string){ 
+    return this.prismaService.user.findFirst( { where: { id } } )
   }
 }
