@@ -21,6 +21,8 @@ export class CreateUserDTO{
   })
   password: string
   
+  
+  @IsOptional()
   @Transform(( { value } ) => value.toUpperCase())
   @IsEnum(ROLE)
   role: ROLE
