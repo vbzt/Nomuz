@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3001')
+const socket = io('http://localhost:3000')
 
 export default function Chat() {
   const [message, setMessage] = useState('')
@@ -18,7 +18,7 @@ export default function Chat() {
       socket.off('message')
     }
   }, [])
-
+ 
   const sendMessage = () => {
     if (message.trim()) {
       socket.emit('message', message)
