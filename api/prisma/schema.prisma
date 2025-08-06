@@ -85,5 +85,4 @@ model ResetPasswordToken{
   expiresAt DateTime
 
   used Boolean @default(false)
-  @@unique([user_id])
 }
