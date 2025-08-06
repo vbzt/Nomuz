@@ -17,7 +17,7 @@ export default function MenuMobile() {
                 <button className="block p-2 rounded-[10px] border border-[#15151e] md:hidden"><TbMenu size={20} /></button>
             </SheetTrigger>
             <SheetContent side="left">
-                <SheetHeader className="flex h-[80px] items-center justify-between px-4 border-b border-[#15151e]">
+                <SheetHeader className="flex h-[65px] items-center justify-between px-4 border-b border-[#15151e]">
                     <SheetClose asChild>
                         <button className="p-2 rounded-[10px] border border-[#15151e]"><IoCloseOutline size={20} /></button>
                     </SheetClose>
