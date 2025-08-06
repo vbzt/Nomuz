@@ -23,7 +23,7 @@ export default function CustomNavigationMenu() {
                     <NavigationMenuTrigger>Serviços</NavigationMenuTrigger>
                     <NavigationMenuContent className="bg-[#0c0c13]">
                         <ul>
-
+                            <li className="flex items-center justify-center flex-row"></li> 
                         </ul>
                     </NavigationMenuContent>
                 </NavigationMenuItem>

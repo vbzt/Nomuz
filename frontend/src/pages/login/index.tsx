@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 
 export default function Login() {
     return (
-        <main className="flex flex-col min-h-[calc(100vh-80px)] items-center justify-start md:justify-center">
+        <main className="flex flex-col min-h-[calc(100vh-65px)] items-center justify-start md:justify-center">
             <div className='flex items-start justify-center flex-col max-w-[400px] w-[90%]'>
                 <h1 className="mt-[20px] mb-[5px] scroll-m-20 text-center text-[24px] font-bold tracking-tight text-balance">Acesse sua conta</h1>
                 <p className="text-[#b3b3b3] mb-[30px] text-[14px]">Entre para gerenciar seus conteúdos com segurança.</p>
