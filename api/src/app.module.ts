@@ -3,9 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module'
 import { ChatGateway } from './modules/chat/chat.gateway';
+import { ResendModule } from 'nest-resend';
+import { env } from './common/utils/env';
 
 @Module({
-  imports: [UserModule, ChatGateway],
+  imports: [UserModule, ChatGateway, ResendModule.forRoot( { apiKey: env('RESEND_API_KEY') } ) ],
   controllers: [AppController],
   providers: [AppService],
 })

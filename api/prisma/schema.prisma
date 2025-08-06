@@ -30,6 +30,7 @@ model User {
   message Message[]
   createdAt DateTime @default(now())
   chat_user ChatUser[]
+  user_token ResetPasswordToken[]
 }
 
 model Message { 
@@ -70,4 +71,19 @@ model ChatUser{
 
 
   @@unique([chat_id, user_id])
+}
+
+
+model ResetPasswordToken{ 
+  id Int @id @unique @default(autoincrement())
+  token String @unique
+
+  user User @relation(fields: [user_id], references: [id]) 
+  user_id String 
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  used Boolean @default(false)
+  @@unique([user_id])
 }
