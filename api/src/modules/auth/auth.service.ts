@@ -95,12 +95,12 @@ export class AuthService {
     } 
 
 
-   async resetPassword(data: ResetPasswordDTO){ 
-    const tokenInfo = await this.prismaService.resetPasswordToken.findUnique( { where: { token: data.token } } )
+   async resetPassword(data: ResetPasswordDTO, token: string){ 
+    const tokenInfo = await this.prismaService.resetPasswordToken.findUnique( { where: { token } } )
     if(!tokenInfo || tokenInfo.used || tokenInfo.expiresAt.getTime() < Date.now()) throw new NotFoundException("Este token de recuperação não existe ou está expirado.")
     
     const userInfo = await this.userExists(data.email)
-    if(tokenInfo.user_id !== userInfo.id) throw new BadRequestException("O token de recuperação e o email inserido não coincidem.")
+    if(tokenInfo.user_id !== userInfo.id) throw new BadRequestException("O token de ")
 
     await this.prismaService.resetPasswordToken.update( { where: { id: tokenInfo.id }, data: { used: true } } )
     await this.userService.update({ password: data.password }, userInfo.id )

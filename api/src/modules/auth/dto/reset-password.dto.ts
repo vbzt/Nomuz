@@ -6,8 +6,6 @@ export class ResetPasswordDTO {
   @IsEmail()
   email: string 
 
-  @IsString() 
-  token: string 
 
   @IsStrongPassword({
     minLength: 8,
