@@ -12,6 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { motion } from "motion/react"
 
 export default function Register() {
     const [step, setStep] = useState(1)
@@ -31,36 +32,36 @@ export default function Register() {
                         <div key={index} className={`h-[4px] w-full rounded-full transition-all duration-300 ${step >= index ? "bg-[#36577d]" : "bg-[#2c2c2c] opacity-50"}`}/>
                     ))}
                 </div>
-                <h1 className="mt-[20px] mb-[5px] scroll-m-20 text-center text-[24px] font-bold tracking-tight text-balance">Crie sua conta</h1>
-                <p className="text-[#b3b3b3] mb-[30px] text-[14px]">Aproveite a melhor segurança do mercado.</p>
+                <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="mt-[20px] mb-[5px] scroll-m-20 text-center text-[24px] font-bold tracking-tight text-balance">Crie sua conta</motion.h1>
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.1 }} className="text-[#b3b3b3] mb-[30px] text-[14px]">Aproveite a melhor segurança do mercado.</motion.p>
                 <form className="w-full">
                     {step === 1 && (
                         <>
-                            <div className="grid w-full items-center gap-3 mb-[20px]">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }} className="grid w-full items-center gap-3 mb-[20px]">
                                 <Label htmlFor="email">Email</Label>
                                 <Input type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13]" />
-                            </div>
-                            <div className="grid w-full items-center gap-3 mb-[20px]">
+                            </motion.div>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }} className="grid w-full items-center gap-3 mb-[20px]">
                                 <Label htmlFor="nome">Nome</Label>
                                 <Input type="text" id="nome" placeholder="Seu Nome" className="bg-[#0c0c13]" />
-                            </div>
+                            </motion.div>
                         </>
                     )}
                     {step === 2 && (
                         <>
-                            <div className="grid w-full items-center gap-3 mb-[20px]">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }} className="grid w-full items-center gap-3 mb-[20px]">
                                 <Label htmlFor="senha">Senha</Label>
                                 <Input type="password" id="senha" placeholder="suasenha123" className="bg-[#0c0c13]" />
-                            </div>
-                            <div className="grid w-full items-center gap-3 mb-[20px]">
+                            </motion.div>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }} className="grid w-full items-center gap-3 mb-[20px]">
                                 <Label htmlFor="confirmsenha">Confirmar senha</Label>
                                 <Input type="password" id="confirmsenha" placeholder="suasenha123" className="bg-[#0c0c13]" />
-                            </div>
+                            </motion.div>
                         </>
                     )}
                     {step === 3 && (
                         <>
-                            <div className="grid w-full items-center gap-3 mb-[20px]">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }} className="grid w-full items-center gap-3 mb-[20px]">
                                 <Label htmlFor="confirmsenha">Você exerce a profissão de advogado(a)?</Label>
                                 <Select onValueChange={(value) => setIsLawyer(value)}>
                                     <SelectTrigger className="w-full bg-[#0c0c13]">
@@ -73,23 +74,23 @@ export default function Register() {
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
-                            </div>
+                            </motion.div>
                             {isLawyer === "true" && (
                                 <>
-                                    <div className="grid w-full items-center gap-3 mb-[20px]">
+                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }} className="grid w-full items-center gap-3 mb-[20px]">
                                         <Label htmlFor="cpf">CPF</Label>
                                         <Input type="text" id="cpf" placeholder="000000000-00" className="bg-[#0c0c13]" />
-                                    </div>
-                                    <div className="grid w-full items-center gap-3 mb-[20px]">
+                                    </motion.div>
+                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.4 }} className="grid w-full items-center gap-3 mb-[20px]">
                                         <Label htmlFor="oab">ID OAB</Label>
                                         <Input type="text" id="oab" placeholder="Certificado OAB" className="bg-[#0c0c13]" />
-                                    </div>
+                                    </motion.div>
                                 </>
                             )}
-                            <div className="flex items-center gap-3 w-full mb-[20px]">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }} className="flex items-center gap-3 w-full mb-[20px]">
                                 <Checkbox id="terms" />
                                 <Label htmlFor="terms">Concordo com termos e condições</Label>
-                            </div>
+                            </motion.div>
                         </>
                     )}
                     {step > 1 && (
