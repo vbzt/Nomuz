@@ -9,7 +9,6 @@ export class UserService {
   constructor (private readonly prismaService: PrismaService){}
 
   async create( data: CreateUserDTO ){
-    if(data.role === "ADMIN") throw new UnauthorizedException() 
     const salt = await bcrypt.genSalt()
     data.password = await bcrypt.hash( data.password, salt )
     return this.prismaService.user.create( { data } )
@@ -41,7 +40,7 @@ export class UserService {
 
   async delete(id: string){ 
      try {
-      const deletedUser = await this.prismaService.user.delete({ where: { id } })
+      const deletedUser = await this.prismaService.user.delete( { where: { id } } )
       return deletedUser
     } catch (e) {
       if(e.code === "P2025") throw new NotFoundException("User does not exists.")

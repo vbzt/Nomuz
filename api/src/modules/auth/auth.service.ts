@@ -12,6 +12,7 @@ import { InjectResend } from 'nest-resend';
 import { Resend } from 'resend';
 import { ResetPasswordEmailDTO } from './dto/reset-password-email.dto';
 import { renderTemplate } from 'src/common/utils/renderTemplate';
+import { ResetPasswordDTO } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -47,15 +48,27 @@ export class AuthService {
 
 
     async register( data: RegisterUserDTO ){ 
-      const user = await this.userService.create(data)
-      return this.createJwtToken(user)
+      if(data.confirmPassword !== data.password) throw new BadRequestException('A senha e a confirmação da senha devem ser iguais.')
+      const { confirmPassword, ...userData} = data
+      const user = await this.userService.create(userData)
+      const token = this.createJwtToken(user)
+
+      return { 
+        message: "Usuário cadastrado com sucesso.",
+        JWTtoken: token,
+      }
     }
 
     async login( data: LoginDTO ){ 
-      const user = await this.userExists(data.email)
+      const user = await this.prismaService.user.findUnique( { where: { email: data.email } } )
+      if(!user) throw new UnauthorizedException("Email ou senha incorretos.")
       const comparePassword = await bcrypt.compare(data.password, user.password)
-      if(!comparePassword) throw new UnauthorizedException("Incorrect email or password")
-      return this.createJwtToken(user)
+      if(!comparePassword) throw new UnauthorizedException("Email ou senha incorretos.")
+      const token = this.createJwtToken(user)
+      return {
+        message: "Login realizado com sucesso.",
+        JWTtoken: token,
+      }
     }
 
     
@@ -70,7 +83,7 @@ export class AuthService {
 
       await this.prismaService.resetPasswordToken.create({ data: { token, user_id: user.id, expiresAt } } )
       await this.sendResetPasswordEmail(emailData)
-      return { message: "RESET DE SENHA ENVIADO CARALHO"}
+      return { message: "Um email contendo instruções para realizar a troca de senha foi enviado."}
     }
 
 
@@ -78,13 +91,25 @@ export class AuthService {
       const resetLink = `https://localhost:3000/auth/reset/${data.token}`
       const html = renderTemplate('reset-password', { baseUrl: "https://localhost:3000/", resetLink})
 
-      await this.resendClient.emails.send( { from: 'Acme <onboarding@resend.dev>', to: data.email, subject: `Password Reset Instructions for ${data.email}`, html} )
-    }
+      await this.resendClient.emails.send( { from: 'Acme <onboarding@resend.dev>', to: data.email, subject: `Intruções para a troca de senha da conta ${data.email}`, html} )
+    } 
 
+
+   async resetPassword(data: ResetPasswordDTO){ 
+    const tokenInfo = await this.prismaService.resetPasswordToken.findUnique( { where: { token: data.token } } )
+    if(!tokenInfo || tokenInfo.used || tokenInfo.expiresAt.getTime() < Date.now()) throw new NotFoundException("Este token de recuperação não existe ou está expirado.")
     
+    const userInfo = await this.userExists(data.email)
+    if(tokenInfo.user_id !== userInfo.id) throw new BadRequestException("O token de recuperação e o email inserido não coincidem.")
+
+    await this.prismaService.resetPasswordToken.update( { where: { id: tokenInfo.id }, data: { used: true } } )
+    await this.userService.update({ password: data.password }, userInfo.id )
+
+    return { message: "Senha atualizada com sucesso."}
+   }
     async userExists(email: string){ 
       const user = await this.prismaService.user.findUnique( { where: { email } } )
-      if(!user) throw new NotFoundException('User does not exists.')
+      if(!user) throw new NotFoundException('O usuário não existe.')
       return user 
     }
 }
