@@ -68,7 +68,7 @@ export class AuthService {
       return {
         message: "Login realizado com sucesso.",
         JWTtoken: token,
-      }
+      } 
     }
 
     
