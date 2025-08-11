@@ -1,10 +1,11 @@
-import Chat from '@/components/Chat'
-import React from 'react'
+import Chat from "@/components/Chat"
 
-const index = () => {
+export default function ChatUser() {
   return (
-    <Chat></Chat>
+    <main>
+      <div>
+        <Chat></Chat>
+      </div>
+    </main>
   )
 }
-
-export default index

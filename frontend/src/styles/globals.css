@@ -85,6 +85,14 @@
     boxShadow: 0 0 0 8px var(--pulse-color);
     }
   }
+  @keyframes pulse {
+  0%, 100% {
+    boxShadow: 0 0 0 0 var(--pulse-color);
+    }
+  50% {
+    boxShadow: 0 0 0 8px var(--pulse-color);
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
