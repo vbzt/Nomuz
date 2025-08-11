@@ -54,7 +54,6 @@ export class AuthService {
       const token = this.createJwtToken(user)
 
       return { 
-        message: "Usuário cadastrado com sucesso.",
         JWTtoken: token,
       }
     }
@@ -66,7 +65,6 @@ export class AuthService {
       if(!comparePassword) throw new UnauthorizedException("Email ou senha incorretos.")
       const token = this.createJwtToken(user)
       return {
-        message: "Login realizado com sucesso.",
         JWTtoken: token,
       } 
     }

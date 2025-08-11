@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { env } from 'src/common/utils/env';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
+import { ChatService } from '../chat/chat.service';
+import { ChatGateway } from '../chat/chat.gateway';
 
 @Module({
   imports: [PrismaModule, 
@@ -15,7 +17,7 @@ import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
     PassportModule
   ],
     
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy ],
   controllers: [AuthController],
   exports: [AuthService] 
 })

@@ -15,14 +15,14 @@ export class AuthController {
   @Post('/register')
   async register(@Body() data: RegisterUserDTO, @Res({ passthrough: true} ) res: Response ){ 
     const token = await this.authService.register(data)
-    res.cookie( 'jwt', token, { httpOnly: true, secure: false } )
+    res.cookie( 'jwt', token, { httpOnly: true, secure: false, sameSite: 'lax' } )
     return { message: "Usuário cadastrado com sucesso." }
   } 
 
   @Post('/login')
   async login(@Body() data: LoginDTO, @Res({ passthrough: true } ) res: Response ) {
     const token =  await this.authService.login(data)
-    res.cookie( 'jwt', token, { httpOnly: true, secure: false } )
+    res.cookie( 'jwt', token, { httpOnly: true, secure: false, sameSite: 'lax' } )
     return { message: "Login realizado com sucesso.", token }
   }
 
@@ -40,7 +40,7 @@ export class AuthController {
   @Post("/reset/:token")
   async resetPassword(@Body() data: ResetPasswordDTO, @Param("token") token: string, @Res({ passthrough: true } ) res: Response){
     const newJwtToken =  await this.authService.resetPassword(data, token)
-    res.cookie( 'jwt', newJwtToken, { httpOnly: true, secure: false } )
+    res.cookie( 'jwt', newJwtToken, { httpOnly: true, secure: false, sameSite: 'lax' } )
     return { message: "Senha atualizada com sucesso."}
   }
 
