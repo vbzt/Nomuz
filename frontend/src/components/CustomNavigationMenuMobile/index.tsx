@@ -31,7 +31,7 @@ export default function CustomNavigationMenuMobile() {
             <a className="w-full text-[15px] border border-[#15151e] p-[8px] rounded-[10px] mb-[10px]" href="/">Inicio</a>
             <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
                 <AccordionItem value="item-1">
-                    <AccordionTrigger className="w-full text-[15px] border border-[#15151e] p-[8px] rounded-[10px] mb-[10px]">Product Information</AccordionTrigger>
+                    <AccordionTrigger className="w-full text-[15px] border border-[#15151e] p-[8px] rounded-[10px] mb-[10px]">Serviços</AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-4 text-balance">
                         <ul className="flex items-center justify-center p-[0px] flex-col">
                             {itemsServices.map((item) => (
