@@ -1,9 +1,7 @@
 export default function Dashboard() {
     return(
-        <main>
-            <div>
-                
-            </div>
+        <main className="flex items-center justify-center flex-row">
+
         </main>
     )
 }

@@ -18,10 +18,10 @@ export default function HomePage() {
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }} className='text-start md:text-[#b3b3b3] max-w-[700px] mb-[25px] md:text-center'>Plataforma segura e prática para advogados organizarem processos, agendas e dados confidenciais com agilidade e proteção total.</motion.p>
         <div className='w-full md:flex-column md:flex items-center justify-center flex-row '>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}>
-            <Button className='w-full mb-[10px] md:group flex items-center justify-center bg-[#36577d] hover:bg-[#254161] mr-[5px] transition duration-200 ease-in-out md:mb-[0px]'>Começar agora<FaArrowRight className='ml-0 transition-all duration-200 ease-in-out group-hover:ml-[10px]' /></Button>
+            <Button className='group w-full mb-[10px] md:flex items-center justify-center bg-[#36577d] hover:bg-[#254161] mr-[5px] transition duration-200 ease-in-out md:mb-[0px]'>Começar agora<FaArrowRight className='ml-0 transition-all duration-200 ease-in-out group-hover:ml-[10px]' /></Button>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.4 }}>
-            <Button className='w-full mb-[20px] md:group transition duration-200 ease-in-out bg-[#0c0c13] border border-[#15151e] hover:bg-[#ffffff0a] md:ml-[5px] md:mb-[0px]'>Saiba mais <TbExternalLink className='ml-0 transition-all duration-200 ease-in-out group-hover:ml-[10px]' /></Button>
+            <Button className='group w-full mb-[20px] md:transition duration-200 ease-in-out bg-[#0c0c13] border border-[#15151e] hover:bg-[#ffffff0a] md:ml-[5px] md:mb-[0px]'>Saiba mais <TbExternalLink className='ml-0 transition-all duration-200 ease-in-out group-hover:ml-[10px]' /></Button>
           </motion.div>
         </div>
       </div>
