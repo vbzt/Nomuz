@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
@@ -53,20 +53,16 @@ export class AuthService {
       const user = await this.userService.create(userData)
       const token = this.createJwtToken(user)
 
-      return { 
-        JWTtoken: token,
-      }
+      return token 
     }
 
     async login( data: LoginDTO ){ 
       const user = await this.prismaService.user.findUnique( { where: { email: data.email } } )
-      if(!user) throw new UnauthorizedException("Email ou senha incorretos.")
+      if(!user) throw new BadRequestException("Email ou senha incorretos.")
       const comparePassword = await bcrypt.compare(data.password, user.password)
-      if(!comparePassword) throw new UnauthorizedException("Email ou senha incorretos.")
+      if(!comparePassword) throw new BadRequestException("Email ou senha incorretos.")
       const token = this.createJwtToken(user)
-      return {
-        JWTtoken: token,
-      } 
+      return token
     }
 
     

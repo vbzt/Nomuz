@@ -1,4 +1,4 @@
-import Chat from '@/components/Chat';
+import Chat from '@/components/ChatHome';
 import { motion } from "motion/react"
 import { Button } from '@/components/ui/button';
 import { FaArrowRight } from "react-icons/fa6";

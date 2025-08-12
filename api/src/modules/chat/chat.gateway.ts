@@ -24,12 +24,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
  handleConnection(socket: Socket) {
   const cookieHeader = socket.handshake.headers.cookie || '';
   const cookies = cookie.parse(cookieHeader);
-  const jwtString = cookies.jwt;
-  if(!jwtString) return
-  const jsonString = jwtString.slice(2);
-  const jwtObject = JSON.parse(jsonString);
-  const token = jwtObject.JWTtoken;
-
+  const token = cookies.jwt;
+  
   if (!token) {
     socket.disconnect(true);
     return;

@@ -11,9 +11,7 @@ async function bootstrap() {
   origin: 'http://localhost:3000',
   credentials: true,
 });
-
-  console.log(crypto.randomBytes(32))
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT ?? 3000);
-}
+} 
 bootstrap();

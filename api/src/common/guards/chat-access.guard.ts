@@ -12,7 +12,7 @@ export class ChatAccessGuard implements CanActivate {
     const chatId = req.params.chatId
 
     const participant = await this.prismaService.chatUser.findFirst( { where: { chat_id: chatId, user_id: userId } } )
-    if(!participant) throw new ForbiddenException("Esta conversa privada não pertence a este usuário")
+    if(!participant) throw new ForbiddenException("Esta conversa privada não existe ou não pertence a este usuário")
     return true
   }
 }

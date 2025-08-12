@@ -1,10 +1,11 @@
-import Chat from "@/components/Chat"
+import ChatHome from "@/components/ChatHome";
+
 
 export default function ChatUser() {
   return (
     <main>
       <div>
-        <Chat></Chat>
+        <ChatHome/>
       </div>
     </main>
   )
