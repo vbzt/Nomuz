@@ -29,7 +29,7 @@ export default function Chat() {
     e.preventDefault();
     setError(null);
     try {
-      const res = await fetch('http://localhost:3000/auth/login', {
+      const res = await fetch('http://localhost:3001/auth/login', {
         method: 'POST',
         credentials: 'include', // MUITO IMPORTANTE: permite salvar cookie HttpOnly
         headers: {
@@ -43,6 +43,7 @@ export default function Chat() {
       }
 
       const data = await res.json();
+      console.log(data)
       console.log('JWT token:', data.token.JWTtoken)
       setLoggedIn(true);
 
