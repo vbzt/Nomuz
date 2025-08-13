@@ -13,11 +13,12 @@ const barlow = Barlow({
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
-  const hideHeader = ['/dashboard']
+  
+  const isDashboardRoute = router.pathname.startsWith('/dashboard')
 
   return (
     <main className={barlow.variable}>
-      {!hideHeader.includes(router.pathname) && <Header />}
+      {!isDashboardRoute && <Header />}
       <Component {...pageProps} />
     </main>
   );
