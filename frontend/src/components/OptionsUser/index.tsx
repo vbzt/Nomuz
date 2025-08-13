@@ -13,62 +13,31 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
+import { TbLogout } from "react-icons/tb";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function OptionsUser() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button className="w-full bg-[red] flex items-center justify-center flex-row rounded-[10px]">
-                    
+                <Button className="w-full px-[10px] py-[10px] h-[auto] mb-[10px] flex items-center justify-start flex-row rounded-[10px] border border-[#15151e] bg-[transparent] hover:bg-[#36577d19]">
+                    <Avatar className="mr-[2px]">
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <div className="flex items-start justify-center flex-col">
+                        <h1 className="text-[12px]">Vitinho</h1>
+                        <p className="text-[10px] text-[#b3b3b3]">victorredin122@gmail.com</p>
+                    </div>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        Profile
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Billing
-                        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Settings
-                        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Keyboard shortcuts
-                        <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
+            <DropdownMenuContent className="w-[238.5px]" align="start">
+                <DropdownMenuLabel className="text-[#b3b3b3] text-[12px]">Minha conta</DropdownMenuLabel>
+                <DropdownMenuItem className="text-[#b3b3b3] hover:bg-[#36577d19] hover:text-[#fff] transition duration-[0.2s] ease-in-out cursor-pointer">GitHub</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
-                                <DropdownMenuItem>Email</DropdownMenuItem>
-                                <DropdownMenuItem>Message</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>More...</DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                    <DropdownMenuItem>
-                        New Team
-                        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>GitHub</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuItem disabled>API</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem className="text-[#c72e38] hover:bg-[#c72e38] hover:text-[#fff] transition duration-[0.2s] cursor-pointer ease-in-out group">
                     Log out
-                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                    <TbLogout className="text-[#c72e38] group-hover:text-[#fff] transition duration-[0.2s] ease-in-out" />
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
