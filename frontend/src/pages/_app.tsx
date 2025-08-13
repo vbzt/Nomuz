@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import { Barlow } from 'next/font/google'
 import { useRouter } from "next/router";
 
+
 const barlow = Barlow({
   subsets: ['latin'],
   variable: '--font-barlow',
