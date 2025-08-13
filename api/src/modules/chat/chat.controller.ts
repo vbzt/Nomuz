@@ -22,11 +22,23 @@ export class ChatController {
     return this.chatService.loadChats(user.id)
   }
 
+  
+  @Get('/:chatId')
+  async getChat( @Param('chatId') chatId: string, @Req() req: AuthenticatedRequest){ 
+    const user = req.user
+    return this.chatService.readMessages(chatId)
+  }
+
   @Post()
   async createPrivateChat(@Req() req: AuthenticatedRequest, @Body('recipientUserId') recipientUserId: string){ 
     const user = req.user 
     return this.chatService.createPrivateChat(user.id, recipientUserId)
   } 
+
+  @Post('/:chatId/')
+  async sendMsg(@Body('content') content: string, @Param('chatId') chatId: string, @Req() req: AuthenticatedRequest ){ 
+    return this.chatService.sendMsg(content, chatId, req.user.id)
+  }
 
 
 }

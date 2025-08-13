@@ -6,5 +6,5 @@ export function encrypt(msg: string){
   let encrypted = cipher.update(msg, 'utf-8', 'hex')
   encrypted += cipher.final('hex')
   const authTag = cipher.getAuthTag().toString('hex')
-  return `${iv.toString('hex')}: ${authTag}:${encrypted}`
+  return `${iv.toString('hex')}:${authTag}:${encrypted}`
 }
