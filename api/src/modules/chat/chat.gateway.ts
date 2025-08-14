@@ -1,8 +1,8 @@
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { Server } from "http";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import * as cookie from 'cookie';
 import { AuthService } from "../auth/auth.service";
+import { ChatService } from "./chat.service";
 
 @WebSocketGateway(3005, {
   
@@ -16,12 +16,12 @@ import { AuthService } from "../auth/auth.service";
 
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{ 
 
-  constructor ( private readonly authService: AuthService){}
+  constructor ( private readonly authService: AuthService, private readonly chatService: ChatService){}
 
   @WebSocketServer()
   server: Server
 
- handleConnection(socket: Socket) {
+  handleConnection(socket: Socket) {
   const cookieHeader = socket.handshake.headers.cookie || '';
   const cookies = cookie.parse(cookieHeader);
   const token = cookies.jwt;
@@ -33,24 +33,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
   try {
     const userPayload = this.authService.checkToken(token);
-    socket.data.user = userPayload;  // guarda os dados do usuário na conexão
+    socket.data.user = userPayload;  
     console.log('User connected:', userPayload.name);
   } catch {
     socket.disconnect(true);
   }
-}
+  }
+
+  @SubscribeMessage('joinChat')
+  handleJoin(socket: Socket, chatId: string){
+    socket.join(chatId)
+  }
 
   handleDisconnect(socket: Socket) {
     console.log(`User ${socket.id} disconnected`)
   }
 
-  @SubscribeMessage('message')
-  handleMessage(client: Socket, message: any){
-    const userName = client.data.user?.name || 'anon'
-    const msg = {
-      name: userName,
-      text: message,
-    };
-    this.server.emit('message', msg)
+  @SubscribeMessage('sendMessage')
+  async handleMessage(socket: Socket, data: { id: string, content: string} ){ 
+    const user = socket.data.user
+    if(!user) return 
+  console.log(data)
+    const savedMessage = await this.chatService.sendMsg(data.content, data.id, user.id)
+   
+    this.server.in(data.id).emit('message', savedMessage)
   }
+  
 }

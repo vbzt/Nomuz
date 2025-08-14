@@ -51,14 +51,22 @@ export class ChatService {
 
   async sendMsg(content: string, chatId: string, userId: string){ 
     const encryptedMessage = this.encryptMsg(content)
+    console.log(chatId)
     await this.chatExists(chatId)
     const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: this.generateMessageHash(chatId, userId, encryptedMessage), chat_id: chatId, sender_id: userId} } )
+    savedMessage.content = content
     return savedMessage
   }
 
   async readMessages(chatId: string){ 
     const chatMessages = await this.prismaService.chat.findMany({ where: { id: chatId }, select: { messages: true} } )
+
+    if(!chatMessages || chatMessages.length === 0) throw new NotFoundException("Esta conversa não existe")
+
     const [ { messages } ] = chatMessages
+    for (const message of messages ){ 
+      message.content = decrypt(message.content)
+    }
     return messages
   }
 
