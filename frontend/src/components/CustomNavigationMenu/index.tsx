@@ -47,7 +47,7 @@ export default function CustomNavigationMenu() {
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <NavigationMenuLink asChild>
-                        <a href="/">Inicio</a>
+                        <a href="/">Início</a>
                     </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
