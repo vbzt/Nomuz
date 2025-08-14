@@ -22,27 +22,27 @@ export default function SideBar() {
     const items = [
         {
             title: "Estatísticas",
-            url: "#",
+            url: "/dashboard/statistics",
             icon: TbChartDots,
         },
         {
             title: "Interações",
-            url: "#",
+            url: "/dashboard/interactions",
             icon: TbUsers,
         },
         {
             title: "Arquivos",
-            url: "#",
+            url: "/dashboard/archives",
             icon: TbArchive,
         },
         {
             title: "Vault",
-            url: "#",
+            url: "/dashboard/vault",
             icon: TbLock,
         },
         {
-            title: "Agenda",
-            url: "#",
+            title: "Compromissos",
+            url: "/dashboard/commitments",
             icon: TbCalendarMonth,
         }
     ]
@@ -59,7 +59,7 @@ export default function SideBar() {
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild className="rounded-[10px] h-0 py-[18px] px-[10px] hover:bg-[#36577d19] hover:transition hover:duration-[0.2s] hover:ease-in-out hover:text-[#fff] text-[#b3b3b3] transition duration-[0.2s] ease-in-out">
-                                        <a href="" className="flex justify-between flex-row-reverse"><item.icon /> {item.title}</a>
+                                        <a href={item.url} className="flex justify-between flex-row-reverse"><item.icon /> {item.title}</a>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}

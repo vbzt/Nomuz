@@ -37,6 +37,7 @@ export default function OptionsUser() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[238.5px]" align="start">
                 <DropdownMenuLabel className="text-[#b3b3b3] text-[12px] select-none">Minha conta</DropdownMenuLabel>
+                <DropdownMenuItem className="text-[#b3b3b3] hover:bg-[#36577d19] hover:text-[#fff] transition duration-[0.2s] ease-in-out cursor-pointer" onClick={() => window.location.href = '/'}>Início</DropdownMenuItem>
                 <DropdownMenuItem className="text-[#b3b3b3] hover:bg-[#36577d19] hover:text-[#fff] transition duration-[0.2s] ease-in-out cursor-pointer" onClick={() => window.location.href = '/dashboard/settings'}>Configurações</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-[#c72e38] hover:bg-[#c72e38] hover:text-[#fff] transition duration-[0.2s] cursor-pointer ease-in-out group">
