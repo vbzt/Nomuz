@@ -61,6 +61,7 @@ export class AuthService {
       if(!user) throw new BadRequestException("Email ou senha incorretos.")
       const comparePassword = await bcrypt.compare(data.password, user.password)
       if(!comparePassword) throw new BadRequestException("Email ou senha incorretos.")
+      console.log(await this.prismaService.user.findMany())
       const token = this.createJwtToken(user)
       return token
     }

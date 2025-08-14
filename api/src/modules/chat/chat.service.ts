@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ThrottlerStorageProvider } from '@nestjs/throttler/dist/throttler.providers';
-import crypto from 'crypto'
+import * as crypto from 'crypto'
 import { encrypt } from 'src/common/security/encrypt';
 import { decrypt } from 'src/common/security/decrypt';
 
@@ -15,7 +14,7 @@ export class ChatService {
     include: {
       users: {
         include: {
-          user: { select: { id: true, name: true } } // Pega o nome
+          user: { select: { id: true, name: true } } 
         }
       }
     }
@@ -24,6 +23,8 @@ export class ChatService {
 
 
   async createPrivateChat(userId: string, recipientUserId: string){  
+      
+
        const existingChat = await this.prismaService.chat.findFirst({
         where: {
           isGroup: false,
@@ -51,15 +52,14 @@ export class ChatService {
   async sendMsg(content: string, chatId: string, userId: string){ 
     const encryptedMessage = this.encryptMsg(content)
     await this.chatExists(chatId)
-    const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: '234', chat_id: chatId, sender_id: userId} } )
+    const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: this.generateMessageHash(chatId, userId, encryptedMessage), chat_id: chatId, sender_id: userId} } )
     return savedMessage
   }
 
   async readMessages(chatId: string){ 
     const chatMessages = await this.prismaService.chat.findMany({ where: { id: chatId }, select: { messages: true} } )
-    for(const message of chatMessages[0].messages){ 
-      console.log(decrypt(message.content))
-    }
+    const [ { messages } ] = chatMessages
+    return messages
   }
 
 
@@ -75,11 +75,9 @@ export class ChatService {
   }
 
 
- generateMessageHash(chat_id: string, sender_id: string, content: string, createdAt: Date) {
-  return crypto
-    .createHash('sha256')
-    .update(`${chat_id}:${sender_id}:${content}:${createdAt.toISOString()}`)
-    .digest('hex');
+ generateMessageHash(chat_id: string, sender_id: string, content: string, createdAt?: Date) {
+  if(!createdAt) createdAt = new Date() 
+  return crypto.createHash('sha256').update(`${chat_id}:${sender_id}:${content}:${createdAt.toISOString()}`).digest('hex');
 }
 
 }
