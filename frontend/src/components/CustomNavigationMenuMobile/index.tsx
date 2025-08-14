@@ -28,7 +28,7 @@ export default function CustomNavigationMenuMobile() {
 
     return (
         <>
-            <a className="w-full text-[15px] border border-[#15151e] p-[8px] rounded-[10px] mb-[10px]" href="/">Inicio</a>
+            <a className="w-full text-[15px] border border-[#15151e] p-[8px] rounded-[10px] mb-[10px]" href="/">Início</a>
             <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
                 <AccordionItem value="item-1">
                     <AccordionTrigger className="w-full text-[15px] border border-[#15151e] p-[8px] rounded-[10px] mb-[10px]">Serviços</AccordionTrigger>
