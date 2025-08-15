@@ -17,8 +17,11 @@ import { TbArchive } from "react-icons/tb";
 import { TbLock } from "react-icons/tb";
 import { TbCalendarMonth } from "react-icons/tb";
 import { TbChartDots } from "react-icons/tb";
+import { usePathname } from "next/navigation";
 
 export default function SideBar() {
+    const pathname = usePathname()
+
     const items = [
         {
             title: "Estatísticas",
@@ -56,13 +59,17 @@ export default function SideBar() {
                         <SidebarMenu>
                             <OptionsUser />
                             <div className="w-full p-[0.5px] h-[0.5px] mb-[20px] bg-[#15151e]"></div>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild className="rounded-[10px] h-0 py-[18px] px-[10px] hover:bg-[#36577d19] hover:transition hover:duration-[0.2s] hover:ease-in-out hover:text-[#fff] text-[#b3b3b3] transition duration-[0.2s] ease-in-out">
-                                        <a href={item.url} className="flex justify-between flex-row-reverse"><item.icon /> {item.title}</a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
+                            {items.map((item) => {
+                                const isPathname = pathname === item.url
+
+                                return (
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton asChild className={`${isPathname === true && "bg-[#36577d19]"} ${"rounded-[10px] h-0 py-[18px] px-[10px] hover:bg-[#36577d19] hover:transition hover:duration-[0.2s] hover:ease-in-out hover:text-[#fff] text-[#b3b3b3] transition duration-[0.2s] ease-in-out"}`}>
+                                            <a href={item.url} className={`${isPathname === true && "text-[#fff]"} ${"flex justify-between flex-row-reverse"}`}><item.icon className={`${isPathname === true && "text-[#fff]"}`}/> {item.title}</a>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                )
+                            })}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
