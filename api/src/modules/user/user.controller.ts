@@ -4,7 +4,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UserExistsPipe } from 'src/common/pipes/user-exists.pipe';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
 
   constructor( private readonly userService: UserService){}
