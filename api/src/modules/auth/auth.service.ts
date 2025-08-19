@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
@@ -68,7 +68,8 @@ export class AuthService {
     
 
     async forgotPassword({ email }: ForgotPasswordDTO){ 
-      const user = await this.userExists(email)
+      const user = await this.userService.readOne(email)
+      if(!user) throw new NotFoundException("Este usuário não existe.")
 
       const token = randomBytes(32).toString('hex')
       const expiresAt = new Date() 
@@ -93,17 +94,16 @@ export class AuthService {
     const tokenInfo = await this.prismaService.resetPasswordToken.findUnique( { where: { token } } )
     if(!tokenInfo || tokenInfo.used || tokenInfo.expiresAt.getTime() < Date.now()) throw new NotFoundException("Este token de recuperação não existe ou está expirado.")
     
-    const userInfo = await this.userExists(data.email)
-    if(tokenInfo.user_id !== userInfo.id) throw new BadRequestException("O token de ")
+    const userInfo = await this.userService.readOne(tokenInfo.user_id)
+    if(!userInfo) throw new NotFoundException("Usuário deste token não existe mais.")
+    if(tokenInfo.user_id !== userInfo.id) throw new ForbiddenException("Este token não pertence a este usuário.")
 
     await this.prismaService.resetPasswordToken.update( { where: { id: tokenInfo.id }, data: { used: true } } )
     await this.userService.update({ password: data.password }, userInfo.id )
 
     return { message: "Senha atualizada com sucesso."}
    }
-    async userExists(email: string){ 
-      const user = await this.prismaService.user.findUnique( { where: { email } } )
-      if(!user) throw new NotFoundException('O usuário não existe.')
-      return user 
-    }
+
+   
+
 }

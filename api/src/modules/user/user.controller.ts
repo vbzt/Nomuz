@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { UserExistsPipe } from 'src/common/pipes/user-exists.pipe';
 
 @Controller('user')
 export class UserController {
@@ -14,7 +15,7 @@ export class UserController {
   }
 
   @Get(":id")
-  async readOne(@Param("id") id: string ){ 
+  async readOne(@Param("id", new ParseUUIDPipe( { version: '4' } ), UserExistsPipe) id: string ){ 
     return this.userService.readOne(id)
   }
 
@@ -24,12 +25,12 @@ export class UserController {
   }
 
   @Patch(":id")
-  async update(@Body() data: UpdateUserDTO, @Param('id') id: string){
+  async update(@Body() data: UpdateUserDTO, @Param('id', new ParseUUIDPipe( { version: '4' } ), UserExistsPipe ) id: string){
     return this.userService.update(data, id)
   }
 
   @Delete(":id")
-    async delete(@Param("id") id: string ){
+    async delete(@Param("id", new ParseUUIDPipe( { version: '4' } ), UserExistsPipe ) id: string ){
       return this.userService.delete(id)
     }
 
