@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register-user.dto';
@@ -38,7 +38,7 @@ export class AuthController {
   }
 
   @Post("/reset/:token")
-  async resetPassword(@Body() data: ResetPasswordDTO, @Param("token") token: string, @Res({ passthrough: true } ) res: Response){
+  async resetPassword(@Body() data: ResetPasswordDTO, @Param("token", new ParseUUIDPipe( { version: "4" } ) ) token: string, @Res({ passthrough: true } ) res: Response){
     const newJwtToken =  await this.authService.resetPassword(data, token)
     res.cookie( 'jwt', newJwtToken, { httpOnly: true, secure: false, sameSite: 'lax' } )
     return { message: "Senha atualizada com sucesso."}

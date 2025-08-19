@@ -23,30 +23,27 @@ export class ChatService {
 
 
   async createPrivateChat(userId: string, recipientUserId: string){  
-      
-
-       const existingChat = await this.prismaService.chat.findFirst({
-        where: {
-          isGroup: false,
-          users: {
-            every: {
-              user_id: { in: [userId, recipientUserId] }
-            }
-          },
-          AND: [
-            { users: { some: { user_id: userId } } },
-            { users: { some: { user_id: recipientUserId } } }
-          ],
-        },
-        include: { users: true }
-        });
-
-  if (existingChat && existingChat.users.length === 2) {
-    return existingChat; 
-  }
-
-    const newChat = await this.prismaService.chat.create( { data: { isGroup: false, users: { create: [ { user_id: userId, role: 'MEMBER' }, { user_id: recipientUserId, role: 'MEMBER' } ] } } } )
-    return newChat 
+    const existingChat = await this.prismaService.chat.findFirst({
+     where: {
+       isGroup: false,
+       users: {
+         every: {
+           user_id: { in: [userId, recipientUserId] }
+         }
+       },
+       AND: [
+         { users: { some: { user_id: userId } } },
+         { users: { some: { user_id: recipientUserId } } }
+       ],
+     },
+     include: { users: true }
+    });
+    if (existingChat && existingChat.users.length === 2) {
+      return existingChat; 
+    }
+  
+      const newChat = await this.prismaService.chat.create( { data: { isGroup: false, users: { create: [ { user_id: userId, role: 'MEMBER' }, { user_id: recipientUserId, role: 'MEMBER' } ] } } } )
+      return newChat 
   }
 
   async sendMsg(content: string, chatId: string, userId: string){ 
