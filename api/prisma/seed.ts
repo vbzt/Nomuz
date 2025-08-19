@@ -19,7 +19,7 @@ async function main() {
     const hashedPass = await bcrypt.hash(adminPass, salt)
     await prisma.user.create( { data: { 
       email,
-      name: 'Admin',
+      name: email.split('@')[0],
       password: hashedPass,
       role: ROLE.ADMIN 
     }})
