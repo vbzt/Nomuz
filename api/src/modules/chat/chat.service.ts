@@ -3,6 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto'
 import { encrypt } from 'src/common/security/encrypt';
 import { decrypt } from 'src/common/security/decrypt';
+import { User } from '@prisma/client';
+import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 
 @Injectable()
 export class ChatService {
@@ -22,18 +24,18 @@ export class ChatService {
   } 
 
 
-  async createPrivateChat(userId: string, recipientUserId: string){  
+  async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
     const existingChat = await this.prismaService.chat.findFirst({
      where: {
        isGroup: false,
        users: {
          every: {
-           user_id: { in: [userId, recipientUserId] }
+           user_id: { in: [req.user.id, recipientUser.id] }
          }
        },
        AND: [
-         { users: { some: { user_id: userId } } },
-         { users: { some: { user_id: recipientUserId } } }
+         { users: { some: { user_id: req.user.id } } },
+         { users: { some: { user_id: recipientUser.id } } }
        ],
      },
      include: { users: true }
@@ -41,8 +43,8 @@ export class ChatService {
     if (existingChat && existingChat.users.length === 2) {
       return existingChat; 
     }
-  
-      const newChat = await this.prismaService.chat.create( { data: { isGroup: false, users: { create: [ { user_id: userId, role: 'MEMBER' }, { user_id: recipientUserId, role: 'MEMBER' } ] } } } )
+
+      const newChat = await this.prismaService.chat.create( { data: { isGroup: false, users: { create: [ { user_id: req.user.id, role: 'MEMBER', user_name: req.user.name }, { user_id: recipientUser.id, role: 'MEMBER', user_name: recipientUser.name } ] } } } )
       return newChat 
   }
 

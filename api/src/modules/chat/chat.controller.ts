@@ -1,15 +1,11 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/common/guards/auth.guard';
-import { ChatAccessGuard } from 'src/common/guards/chat-access.guard';
 import { ChatService } from './chat.service'
-import { Request } from 'express';
 import { User } from '@prisma/client';
-import { UserData } from 'src/common/decorators/user.decorator';
 import { UserExistsPipe } from 'src/common/pipes/user-exists.pipe';
+import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
+import { ChatAccessGuard } from 'src/common/guards/chat-access.guard';
 
-interface AuthenticatedRequest extends Request {
-  user: Pick<User, 'id' | 'email' | 'name' | 'role'>
-}
 
 
 
@@ -24,16 +20,15 @@ export class ChatController {
     return this.chatService.loadChats(user.id)
   }
 
-  
+  @UseGuards(ChatAccessGuard)
   @Get('/:chatId')
   async getChat( @Param('chatId') chatId: string ){ 
     return this.chatService.readMessages(chatId)
   }
 
   @Post()
-  async createPrivateChat(@Req() req: AuthenticatedRequest, @Body('recipientUserId', new ParseUUIDPipe( { version: '4'  } ), UserExistsPipe ) recipientUserId: string){ 
-    const user = req.user 
-    return this.chatService.createPrivateChat(user.id, recipientUserId)
+  async createPrivateChat(@Req() req: AuthenticatedRequest, @Body('recipientUserId', new ParseUUIDPipe( { version: '4'  } ), UserExistsPipe ) recipientUser: User){ 
+    return this.chatService.createPrivateChat(req, recipientUser)
   } 
 
   @Post('/:chatId/')
