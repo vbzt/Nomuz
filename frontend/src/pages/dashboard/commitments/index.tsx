@@ -32,18 +32,15 @@ export default function Commitments() {
           <SidebarTrigger className="flex justify-center items-center bg-[#0c0c13] p-[6px] rounded-[10px] border border-[#15151e] h-9 w-9 transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a] hover:text-[#fff] group" />
         </div>
         <div className="flex items-start justify-center flex-col p-[20px] w-full">
-          <div className="flex items-center justify-between w-full mb-[20px]">
-            <div className="flex flex-col items-start justify-center">
-              <h1 className="mb-[2px] scroll-m-20 text-center text-[20px] font-bold tracking-tight text-balance">
-                Compromissos
-              </h1>
-              <p className="text-[#b3b3b3] text-[12px]">
-                Compromissos e lembretes organizados em um só lugar.
-              </p>
-            </div>
-            <Button className="bg-[#0c0c13] border border-[#15151e] hover:bg-[#ffffff0a]"><IoAdd size={15}/> Novo compromisso</Button>
+          <div className="flex items-start justify-center flex-col w-full mb-[20px]">
+            <h1 className="mb-[2px] scroll-m-20 text-center text-[20px] font-bold tracking-tight text-balance">
+              Compromissos
+            </h1>
+            <p className="text-[#b3b3b3] text-[12px]">
+              Compromissos e lembretes organizados em um só lugar.
+            </p>
           </div>
-          <div className="mb-[10px] w-full flex flex-row gap-[10px]">
+          <div className="flex-col-reverse mb-[10px] w-full flex lg:flex-row gap-[10px]">
             <Input type="email" id="email" placeholder="Buscar por compromisso, cliente, data..." className="bg-[#0c0c13] border border-[#15151e] rounded-[10px]" />
             <Select>
               <SelectTrigger className="w-full bg-[#0c0c13]">
@@ -68,6 +65,7 @@ export default function Commitments() {
                 </SelectGroup>
               </SelectContent>
             </Select>
+            <Button className="bg-[#0c0c13] border border-[#15151e] hover:bg-[#ffffff0a]"><IoAdd size={15} /> Novo compromisso</Button>
           </div>
           <div className="w-full border border-[#15151e] p-2 rounded-[10px]">
             <Table>

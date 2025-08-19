@@ -30,11 +30,11 @@ export default function TableCommitments({ client, status, commitment, date }: T
                             ${status === 'cancelled' && 'bg-[#c72e380c] text-[#c72e38] border-[#c72e38]'}
                             ${status === 'completed' && 'bg-[#1f88de0c] text-[#1f88de] border-[#1f88de]'}
                             ${status === 'pending' && 'bg-[#64646409] text-[#b3b3b3] border-[#15151e]'} 
-                            ${"py-[3px] px-[8px] text-[12px] flex items-center justify-center max-w-[100px] w-full rounded-[10px] border"}`}>
+                            ${"h-[28px] w-[28px] flex items-center justify-center border rounded-[10px] lg:py-[3px] lg:px-[8px] lg:text-[12px] lg:flex lg:items-center lg:justify-center lg:max-w-[100px] lg:w-full lg:rounded-[10px] lg:border"}`}>
                             {status === 'pending' && <TbLoader size={14} />}
                             {status === 'completed' && <TbCircleCheckFilled size={15} />}
                             {status === 'cancelled' && <TbCircleXFilled size={15}/>}
-                            <p className="ml-[8px] mb-[0px]">
+                            <p className="hidden lg:flex ml-[8px] mb-[0px]">
                                 {status === 'pending' && 'Pendente'}
                                 {status === 'completed' && 'Concluído'}
                                 {status === 'cancelled' && 'Cancelado'}
