@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/chart"
 
 const chartData = [
-    { month: "Janeiro", financial: 186, interactions: 80 },
+    { month: "Janeiro", financial: 1500, interactions: 100 },
     { month: "Fevereiro", financial: 305, interactions: 200 },
     { month: "Março", financial: 237, interactions: 120 },
     { month: "Abril", financial: 73, interactions: 190 },
