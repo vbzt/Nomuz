@@ -37,5 +37,12 @@ export class ChatController {
     return this.chatService.sendMsg(content, chatId, req.user.id)
   }
 
+  @Post('/groups')
+  async createGroup(@Req() req: AuthenticatedRequest, @Body('name') name: string,  ){ 
+
+  }
+
+
+
 
 }

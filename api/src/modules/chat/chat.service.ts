@@ -57,24 +57,44 @@ export class ChatService {
     return savedMessage
   }
 
-  async readMessages(chatId: string){ 
-    const chatMessages = await this.prismaService.chat.findMany({ where: { id: chatId }, select: { messages: true} } )
+  async readMessages(chatId: string) {
+  const chat = await this.prismaService.chat.findUnique({
+    where: { id: chatId },
+    include: {
+      messages: {
+        orderBy: { createdAt: 'asc' }, 
+        select: {
+          id: true,
+          content: true,
+          createdAt: true,
+          sender_id: true,
+          sender: { select: { id: true, name: true } },
+        },
+      },
+      users: {
+        select: {
+          user_name: true,
+          user: { select: { id: true, name: true } },
+        },
+      },
+    },
+  });
 
-    if(!chatMessages || chatMessages.length === 0) throw new NotFoundException("Esta conversa não existe")
+  if (!chat) throw new NotFoundException('Esta conversa não existe');
 
-    const [ { messages } ] = chatMessages
-    for (const message of messages ){ 
-      message.content = decrypt(message.content)
-    }
-    return messages
+  return {
+    messages: chat.messages.map(msg => ({
+      ...msg,
+      content: decrypt(msg.content),
+    })),
+    users: chat.users,
+  };
   }
 
-
-   encryptMsg(content: string){ 
+  encryptMsg(content: string){ 
     const encrypted = encrypt(content)
     return encrypted
   }
-
   async chatExists(chatId: string){
     const chat = await this.prismaService.chat.findUnique({ where: { id: chatId } } )
     if(!chat) throw new NotFoundException('Esta conversa não existe.')
