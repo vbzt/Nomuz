@@ -52,7 +52,7 @@ export default function Statistics() {
                             isFinancial={false}
                         />
                     </div>
-                    <div className="w-full flex flex-col items-center justify-center h-[400px] border border-[#15151e] rounded-[10px] p-[10px] overflow-x-auto md:overflow-x-visible">
+                    <div className="hidden lg:w-full lg:flex lg:flex-col lg:items-center lg:justify-center lg:h-[400px] border border-[#15151e] rounded-[10px] p-[10px] overflow-x-auto md:overflow-x-visible">
                         <ChartStatistics />
                     </div>
                 </div>
