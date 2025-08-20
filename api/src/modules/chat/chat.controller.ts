@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ChatService } from './chat.service'
 import { User } from '@prisma/client';
@@ -6,6 +6,8 @@ import { UserExistsPipe } from 'src/common/pipes/user-exists.pipe';
 import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 import { ChatAccessGuard } from 'src/common/guards/chat-access.guard';
 import { ParseCUIDPipe } from 'src/common/pipes/parse-cuid.pipe';
+import { UpdateGroupDTO } from './dto/update-group.dto';
+import { ChatAdminGuard } from 'src/common/guards/chat-admin.guard';
 
 
 
@@ -32,15 +34,55 @@ export class ChatController {
     return this.chatService.createPrivateChat(req, recipientUser)
   } 
 
+  
+  @UseGuards(ChatAccessGuard)
   @Post('/:chatId/')
   async sendMsg(@Body('content') content: string, @Param('chatId', ParseCUIDPipe ) chatId: string, @Req() req: AuthenticatedRequest ){ 
     return this.chatService.sendMsg(content, chatId, req.user.id)
   }
 
   @Post('/groups')
-  async createGroup(@Req() req: AuthenticatedRequest, @Body('name') name: string,  ){ 
+  async createGroup(@Req() req: AuthenticatedRequest, @Body('name') name: string){ 
 
   }
+
+  
+
+  @UseGuards(ChatAccessGuard, ChatAdminGuard)
+  @Patch('/groups/:chatId')
+  async updateGroup(@Req() req: AuthenticatedRequest, @Body() data: UpdateGroupDTO, @Param('chatId', ParseCUIDPipe) chatId: string ){ 
+
+  }
+
+  
+  @UseGuards(ChatAccessGuard)
+  @Patch('/groups/:chatId/leave')
+  async leaveGroup(@Req() req: AuthenticatedRequest, @Param('chatId', ParseCUIDPipe ) chatId: string){ 
+
+  }
+
+  
+  @UseGuards(ChatAccessGuard, ChatAdminGuard)
+  @Patch('/groups/:chatId/members/:userId')
+  async addMember(
+    @Req() req: AuthenticatedRequest, 
+    @Param('chatId', ParseCUIDPipe) chatId: string, 
+    @Param('userId', ParseCUIDPipe, UserExistsPipe) userId: string ){ 
+
+  }
+
+
+  @UseGuards(ChatAccessGuard, ChatAdminGuard)
+  @Delete('/groups/:chatId/members/:userId')
+  async removeMember(
+    @Req() req: AuthenticatedRequest, 
+    @Param('chatId', ParseCUIDPipe) chatId: string, 
+    @Param('userId', ParseCUIDPipe, UserExistsPipe) userId: string ){ 
+
+  }
+
+
+
 
 
 

@@ -51,6 +51,7 @@ model Chat {
   id String @id @default(cuid())
 
   isGroup Boolean @default(false)
+  onlyAdmin Boolean? @default(false)
   name String? 
   messages Message[]
   users ChatUser[]

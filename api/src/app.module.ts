@@ -7,9 +7,10 @@ import { ResendModule } from 'nest-resend';
 import { env } from './common/utils/env';
 import { AuthModule } from './modules/auth/auth.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
-  imports: [UserModule, AuthModule, ChatModule, ResendModule.forRoot( { apiKey: env('RESEND_API_KEY') } ) ],
+  imports: [UserModule, AuthModule, ChatModule, ResendModule.forRoot( { apiKey: env('RESEND_API_KEY') } ), DashboardModule ],
   controllers: [AppController],
   providers: [AppService],
 })

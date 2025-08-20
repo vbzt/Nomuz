@@ -23,7 +23,6 @@ export class ChatService {
   });
   } 
 
-
   async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
     const existingChat = await this.prismaService.chat.findFirst({
      where: {
@@ -96,7 +95,7 @@ export class ChatService {
     return encrypted
   }
   async chatExists(chatId: string){
-    const chat = await this.prismaService.chat.findUnique({ where: { id: chatId } } )
+    const chat = await this.prismaService.chat.findUnique({ where: { id: chatId }, include: { users: true } } )
     if(!chat) throw new NotFoundException('Esta conversa não existe.')
     return chat
   }
