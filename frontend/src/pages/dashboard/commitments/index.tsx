@@ -26,12 +26,12 @@ import { IoAdd } from "react-icons/io5";
 export default function Commitments() {
   return (
     <SidebarProvider>
-      <main className="flex items-start justify-center flex-row w-full">
+      <main className="flex items-start justify-center flex-row w-full min-h-screen overflow-x-hidden relative">
         <SideBar />
         <div className="p-[10px] border-r border-[#15151e] min-h-full">
           <SidebarTrigger className="flex justify-center items-center bg-[#0c0c13] p-[6px] rounded-[10px] border border-[#15151e] h-9 w-9 transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a] hover:text-[#fff] group" />
         </div>
-        <div className="flex items-start justify-center flex-col p-[20px] w-full">
+        <div className="flex items-start justify-center flex-col p-[20px] w-full min-w-0">
           <div className="flex items-start justify-center flex-col w-full mb-[20px]">
             <h1 className="mb-[2px] scroll-m-20 text-center text-[20px] font-bold tracking-tight text-balance">
               Compromissos
@@ -48,6 +48,7 @@ export default function Commitments() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
+                  <SelectItem value="none">Nenhum</SelectItem>
                   <SelectItem value="pending">Pendente</SelectItem>
                   <SelectItem value="completed">Concluído</SelectItem>
                   <SelectItem value="cancelled">Cancelado</SelectItem>
@@ -60,6 +61,7 @@ export default function Commitments() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
+                  <SelectItem value="none">Nenhum</SelectItem>
                   <SelectItem value="recent">Mais recente</SelectItem>
                   <SelectItem value="old">Mais antigo</SelectItem>
                 </SelectGroup>
@@ -68,7 +70,7 @@ export default function Commitments() {
             <Button className="bg-[#0c0c13] border border-[#15151e] hover:bg-[#ffffff0a]"><IoAdd size={15} /> Novo compromisso</Button>
           </div>
           <div className="w-full border border-[#15151e] p-2 rounded-[10px]">
-            <Table>
+            <Table className="max-w-full w-full">
               <TableHeader>
                 <TableRow className="rounded-full">
                   <TableHead className="w-[100px]">Cliente</TableHead>
