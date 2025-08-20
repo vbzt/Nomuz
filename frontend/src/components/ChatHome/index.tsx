@@ -3,13 +3,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+interface ChatUser {
+  user_id: string;
+  user_name: string;
+  user: { id: string; name: string };
+}
+
 interface Chat {
   id: string;
   isGroup: boolean;
-  name?: string | null;  // <-- aqui, nome opcional que pode ser string ou null
-  users: { user_id: string; name: string }[];
+  name?: string | null;
+  users: ChatUser[];
   lastMessage?: { text: string; createdAt: string };
 }
+
 
 
 export default function ChatList() {
@@ -56,7 +63,7 @@ export default function ChatList() {
   useEffect(() => {
     if (!loggedIn) return;
 
-    fetch('http://localhost:3001/chat', {
+    fetch('http://localhost:3001/chats', {
       method: 'GET',
       credentials: 'include',
     })
@@ -104,25 +111,25 @@ export default function ChatList() {
       {chats.length === 0 && <p>Nenhum chat encontrado.</p>}
       <ul>
         {chats.map((chat) => {
-          const otherUser = chat.users.find((u) => u.name !== user);
-          const chatName = chat.isGroup
-            ? chat.name || 'Grupo sem nome'
-            : otherUser?.name || 'Chat sem nome';
+  const otherUser = chat.users.find((u) => u.user.name !== user);
+  const chatName = chat.isGroup
+    ? chat.name || 'Grupo sem nome'
+    : otherUser?.user.name || 'Chat sem nome';
 
-          return (
-            <li key={chat.id}>
-              <Link href={`/chat/${chat.id}`} legacyBehavior>
-                <a>
-                  <strong>{chatName}</strong>
-                  {chat.lastMessage && (
-                    <p style={{ fontSize: '0.8rem', color: '#666' }}>
-                      {chat.lastMessage.text}
-                    </p>
-                  )}
-                </a>
-              </Link>
-            </li>
-          );
+  return (
+    <li key={chat.id}>
+      <Link href={`/chat/${chat.id}`} legacyBehavior>
+        <a>
+          <strong>{chatName}</strong>
+          {chat.lastMessage && (
+            <p style={{ fontSize: '0.8rem', color: '#666' }}>
+              {chat.lastMessage.text}
+            </p>
+          )}
+        </a>
+      </Link>
+    </li>
+  );
         })}
       </ul>
     </div>

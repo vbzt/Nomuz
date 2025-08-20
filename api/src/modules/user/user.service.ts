@@ -15,11 +15,11 @@ export class UserService {
   }
 
   async read(){ 
-    return this.prismaService.user.findMany()
+    return this.prismaService.user.findMany( { omit: { password: true } } )
   }
 
   async readOne(id: string){ 
-    const user = await this.prismaService.user.findFirst( { where: { id }, omit: { password: true } } )
+    const user = await this.prismaService.user.findUnique( { where: { id }, omit: { password: true } } )
     return user
   }
 
@@ -34,7 +34,7 @@ export class UserService {
   }
 
   async delete(id: string){ 
-    const deletedUser = await this.prismaService.user.delete( { where: { id } } )
+    const deletedUser = await this.prismaService.user.delete( { where: { id } , omit: { password: true }} )
     return deletedUser  
   }
 }
