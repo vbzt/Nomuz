@@ -8,6 +8,9 @@ import { ChatAccessGuard } from 'src/common/guards/chat-access.guard';
 import { ParseCUIDPipe } from 'src/common/pipes/parse-cuid.pipe';
 import { UpdateGroupDTO } from './dto/update-group.dto';
 import { ChatAdminGuard } from 'src/common/guards/chat-admin.guard';
+import { CreateGroupDTO } from './dto/create-group.dto';
+import { UserService } from '../user/user.service';
+import { GroupUsersExistsPipe } from 'src/common/pipes/group-users-exists.pipe';
 
 
 
@@ -15,7 +18,7 @@ import { ChatAdminGuard } from 'src/common/guards/chat-admin.guard';
 @UseGuards(AuthGuard)
 @Controller('chats')
 export class ChatController {
-  constructor(private readonly chatService: ChatService){} 
+  constructor( private readonly chatService: ChatService, private readonly userService: UserService ){} 
 
   @Get()
   async showAllChats(@Req() req: AuthenticatedRequest){ 
@@ -42,8 +45,8 @@ export class ChatController {
   }
 
   @Post('/groups')
-  async createGroup(@Req() req: AuthenticatedRequest, @Body('name') name: string){ 
-
+  async createGroup(@Req() req: AuthenticatedRequest,@Body('memberId',ParseCUIDPipe, GroupUsersExistsPipe) memberIds: User[] , @Body() data: CreateGroupDTO){ 
+    return this.chatService
   }
 
   

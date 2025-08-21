@@ -5,6 +5,7 @@ import { encrypt } from 'src/common/security/encrypt';
 import { decrypt } from 'src/common/security/decrypt';
 import { User } from '@prisma/client';
 import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
+import { CreateGroupDTO } from './dto/create-group.dto';
 
 @Injectable()
 export class ChatService {
@@ -22,30 +23,6 @@ export class ChatService {
     }
   });
   } 
-
-  async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
-    const existingChat = await this.prismaService.chat.findFirst({
-     where: {
-       isGroup: false,
-       users: {
-         every: {
-           user_id: { in: [req.user.id, recipientUser.id] }
-         }
-       },
-       AND: [
-         { users: { some: { user_id: req.user.id } } },
-         { users: { some: { user_id: recipientUser.id } } }
-       ],
-     },
-     include: { users: true }
-    });
-    if (existingChat && existingChat.users.length === 2) {
-      return existingChat; 
-    }
-
-      const newChat = await this.prismaService.chat.create( { data: { isGroup: false, users: { create: [ { user_id: req.user.id, role: 'MEMBER', user_name: req.user.name }, { user_id: recipientUser.id, role: 'MEMBER', user_name: recipientUser.name } ] } } } )
-      return newChat 
-  }
 
   async sendMsg(content: string, chatId: string, userId: string){ 
     const encryptedMessage = this.encryptMsg(content)
@@ -94,6 +71,7 @@ export class ChatService {
     const encrypted = encrypt(content)
     return encrypted
   }
+
   async chatExists(chatId: string){
     const chat = await this.prismaService.chat.findUnique({ where: { id: chatId }, include: { users: true } } )
     if(!chat) throw new NotFoundException('Esta conversa não existe.')
