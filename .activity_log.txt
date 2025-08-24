@@ -40,3 +40,4 @@
 [2025-08-23T13:40:25-03:00] feat: repository now supports queue processing
 [2025-08-23T22:31:14-03:00] ajustes finos
 [2025-08-24T08:34:19-03:00] feat: handler now supports logging system
+[2025-08-24T14:13:38-03:00] feat: gateway now supports email notifications
