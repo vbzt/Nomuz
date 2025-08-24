@@ -98,3 +98,4 @@
 [2025-08-17T13:30:33-03:00] feat: implement email notifications with WebSocket
 [2025-08-23T13:20:40-03:00] melhorando isso aqui
 [2025-08-23T13:40:25-03:00] feat: repository now supports queue processing
+[2025-08-23T22:31:14-03:00] ajustes finos
