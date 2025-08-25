@@ -6,6 +6,7 @@ import { TbCheck } from "react-icons/tb";
 import ConfirmationAlert from "@/components/ConfirmationAlert";
 import StatisticsCard from "@/components/StatisticsCard";
 import ChartStatistics from "@/components/ChartStatistics";
+import SidebarActions from "@/components/OtherButtonsSideBar";
 
 export default function Statistics() {
     return (
@@ -13,7 +14,7 @@ export default function Statistics() {
             <main className="flex items-start justify-center flex-row w-full">
                 <SideBar />
                 <div className="p-[10px] border-r border-[#15151e] min-h-full">
-                    <SidebarTrigger className="flex justify-center items-center bg-[#0c0c13] p-[6px] rounded-[10px] border border-[#15151e] h-9 w-9 transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a] hover:text-[#fff] group" />
+                    <SidebarActions />
                 </div>
                 <div className="flex items-start justify-center flex-col p-[20px] w-full">
                     <h1 className="mb-[2px] scroll-m-20 text-center text-[20px] font-bold tracking-tight text-balance">Estatísticas</h1>

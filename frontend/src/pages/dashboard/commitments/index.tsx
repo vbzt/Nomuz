@@ -1,5 +1,5 @@
 import SideBar from "@/components/SideBar";
-import { SidebarTrigger, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import TableCommitments from "@/components/TableCommitment";
 import {
   Table,
@@ -20,8 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/button";
-import { IoAdd } from "react-icons/io5";
+import CreateCommitmentDialog from "@/components/CreateCommitmentDialog";
+import SidebarActions from "@/components/OtherButtonsSideBar";
 
 export default function Commitments() {
   return (
@@ -29,7 +29,7 @@ export default function Commitments() {
       <main className="flex items-start justify-center flex-row w-full min-h-screen overflow-x-hidden relative">
         <SideBar />
         <div className="p-[10px] border-r border-[#15151e] min-h-full">
-          <SidebarTrigger className="flex justify-center items-center bg-[#0c0c13] p-[6px] rounded-[10px] border border-[#15151e] h-9 w-9 transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a] hover:text-[#fff] group" />
+          <SidebarActions />
         </div>
         <div className="flex items-start justify-center flex-col p-[20px] w-full min-w-0">
           <div className="flex items-start justify-center flex-col w-full mb-[20px]">
@@ -67,7 +67,7 @@ export default function Commitments() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <Button className="bg-[#0c0c13] border border-[#15151e] hover:bg-[#ffffff0a]"><IoAdd size={15} /> Novo compromisso</Button>
+            <CreateCommitmentDialog />
           </div>
           <div className="w-full border border-[#15151e] p-2 rounded-[10px]">
             <Table className="max-w-full w-full">
