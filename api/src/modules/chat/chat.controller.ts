@@ -45,7 +45,7 @@ export class ChatController {
   }
 
   @Post('/groups')
-  async createGroup(@Req() req: AuthenticatedRequest,@Body('memberId',ParseCUIDPipe, GroupUsersExistsPipe) memberIds: User[] , @Body() data: CreateGroupDTO){ 
+  async createGroup(@Req() req: AuthenticatedRequest,@Body('memberId',ParseCUIDPipe, GroupUsersExistsPipe) members: User[] , @Body() data: CreateGroupDTO){ 
     return this.chatService
   }
 

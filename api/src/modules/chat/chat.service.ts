@@ -6,10 +6,73 @@ import { decrypt } from 'src/common/security/decrypt';
 import { User } from '@prisma/client';
 import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 import { CreateGroupDTO } from './dto/create-group.dto';
+import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
 
 @Injectable()
 export class ChatService {
   constructor(private readonly prismaService: PrismaService){ }
+
+  async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
+  const existingChat = await this.prismaService.chat.findFirst({
+    where: {
+      isGroup: false,
+      users: {
+        every: {
+          user_id: { in: [req.user.id, recipientUser.id] }
+        }
+      },
+      AND: [
+        { users: { some: { user_id: req.user.id } } },
+        { users: { some: { user_id: recipientUser.id } } }
+      ],
+    },
+    include: { users: true }
+  });
+
+  if (existingChat && existingChat.users.length === 2) {
+    return existingChat; 
+  }
+
+  const newChat = await this.prismaService.chat.create({
+    data: { 
+      isGroup: false, 
+      users: { 
+        create: [ 
+          { user_id: req.user.id, role: 'MEMBER', user_name: req.user.name }, 
+          { user_id: recipientUser.id, role: 'MEMBER', user_name: recipientUser.name } 
+        ] 
+      } 
+    } 
+  });
+
+  return newChat;
+  }
+
+  async createGroupChat(req: AuthenticatedRequest, members: User[], { name }: CreateGroupDTO){ 
+    const allMembers = [ { ...req.user, role: 'OWNER' }, ...members.map(u => ({ ...u, role: 'MEMBER' })) ]
+    return this.prismaService.chat.create({
+        data: {
+          isGroup: true,
+          name: name || `Grupo de ${req.user.name}`,
+          users: {
+            create: allMembers.map(m => ({
+              role: CHAT_ROLE[m.role as keyof typeof CHAT_ROLE],
+              user_name: m.name, 
+              user: {
+                connect: { id: m.id }
+              }
+            }))
+          }
+        },
+        include: {
+          users: {
+            include: {
+              user: true
+            }
+          }
+        }
+      });
+  }
 
   async loadChats(userId: string) {
   return this.prismaService.chat.findMany({
