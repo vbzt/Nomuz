@@ -6,7 +6,7 @@ import { TbCheck } from "react-icons/tb";
 import ConfirmationAlert from "@/components/ConfirmationAlert";
 import StatisticsCard from "@/components/StatisticsCard";
 import ChartStatistics from "@/components/ChartStatistics";
-import SidebarActions from "@/components/OtherButtonsSideBar";
+import SidebarActions from "@/components/SidebarActions";
 
 export default function Statistics() {
     return (
