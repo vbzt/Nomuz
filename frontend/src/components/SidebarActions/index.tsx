@@ -99,6 +99,7 @@ export default function SidebarActions() {
                             </TooltipContent>
                         </Tooltip>
                     ))}
+                    
                 </>
             )}
         </div>

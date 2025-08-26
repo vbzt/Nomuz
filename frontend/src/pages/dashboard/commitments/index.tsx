@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import CreateCommitmentDialog from "@/components/CreateCommitmentDialog";
-import SidebarActions from "@/components/OtherButtonsSideBar";
+import SidebarActions from "@/components/SidebarActions";
 
 export default function Commitments() {
   return (

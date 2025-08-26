@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { TbCheck } from "react-icons/tb";
 import ConfirmationAlert from "@/components/ConfirmationAlert";
-import SidebarActions from "@/components/OtherButtonsSideBar";
+import SidebarActions from "@/components/SidebarActions";
 
 export default function Archives() {
     return (
