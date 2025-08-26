@@ -1,5 +1,4 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
@@ -12,7 +11,7 @@ export class ChatAccessGuard implements CanActivate {
     const chatId = req.params.chatId
 
     const participant = await this.prismaService.chatUser.findFirst( { where: { chat_id: chatId, user_id: userId } } )
-    if(!participant) throw new ForbiddenException("Esta conversa privada não existe ou não pertence a este usuário")
+    if(!participant) throw new NotFoundException("Esta conversa não existe ou não pertence a este usuário")
     return true
   }
 }

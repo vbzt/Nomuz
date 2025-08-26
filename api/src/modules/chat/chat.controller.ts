@@ -56,18 +56,15 @@ export class ChatController {
   @UseGuards(ChatAccessGuard, ChatAdminGuard)
   @Patch('/groups/:chatId')
   async updateGroup(@Req() req: AuthenticatedRequest, @Body() data: UpdateGroupDTO, @Param('chatId', ParseCUIDPipe) chatId: string ){ 
-
+    return this.chatService.updateGroupChat(req, data, chatId)
   }
 
 
   
   @UseGuards(ChatAccessGuard, ChatAdminGuard)
   @Post('/groups/:chatId/members')
-  async addMember(
-    @Req() req: AuthenticatedRequest, 
-    @Param('chatId', ParseCUIDPipe) chatId: string, 
-    @Body('userId', ParseCUIDPipe, UserExistsPipe) userId: string ){ 
-
+  async addMember( @Req() req: AuthenticatedRequest, @Param('chatId', ParseCUIDPipe) chatId: string, @Body('userId', ParseCUIDPipe, UserExistsPipe) user: User ){ 
+    return this.chatService.addMember(req, user, chatId)
   }
 
   @UseGuards(ChatAccessGuard, ChatAdminGuard)

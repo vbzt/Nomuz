@@ -3,10 +3,11 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto'
 import { encrypt } from 'src/common/security/encrypt';
 import { decrypt } from 'src/common/security/decrypt';
-import { User } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 import { CreateGroupDTO } from './dto/create-group.dto';
 import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
+import { UpdateGroupDTO } from './dto/update-group.dto';
 
 @Injectable()
 export class ChatService {
@@ -86,6 +87,33 @@ export class ChatService {
     }
   });
   } 
+
+  async updateGroupChat(req: AuthenticatedRequest, data: UpdateGroupDTO, chatId: string){
+    if(!data.adminOnly && !data.name ) return { message: "Nenhuma alteração foi feita"} 
+    const group = await this.prismaService.chat.findUnique( { where: { id: chatId } } )
+    if( data.adminOnly ) group!.onlyAdmin = data.adminOnly
+    if( data.name ) group!.name = data.name
+    const updatedGroup = await this.prismaService.chat.update( { where: { id: chatId }, data: { ...group }, select: { name: true, onlyAdmin: true, users: true }}) 
+    return { success: true, message: `Grupo atualizado por: ${req.user.name}`, updatedGroup }
+  }
+
+  async addMember(req: AuthenticatedRequest, user: User, chatId: string ){ 
+    const newMember = await this.prismaService.chat.update( { where: { id: chatId }, 
+      data: { users: 
+        { create: 
+          { role: 'MEMBER',
+            user_name: user.name, 
+            user: { connect: { id: user.id } }
+          }
+        }
+      },
+      include: { users: true } 
+    })
+    return { success: true, message: `${req.user.name} adicionou ${user.name} ao grupo.`, newMember}
+  }
+
+  async leaveGroup(req: AuthenticatedRequest, chatId: string){ 
+  }
 
   async sendMsg(content: string, chatId: string, userId: string){ 
     const encryptedMessage = this.encryptMsg(content)
