@@ -20,7 +20,7 @@ import { ParseUppercasePipe } from 'src/common/pipes/parse-uppercase.pipe';
 @UseGuards(AuthGuard)
 @Controller('chats')
 export class ChatController {
-  constructor( private readonly chatService: ChatService, private readonly userService: UserService ){} 
+  constructor( private readonly chatService: ChatService){} 
 
   @Get()
   async showAllChats(@Req() req: AuthenticatedRequest){ 
@@ -63,31 +63,31 @@ export class ChatController {
   
   @UseGuards(ChatAccessGuard, ChatAdminGuard)
   @Post('/groups/:chatId/members')
-  async addMember( @Req() req: AuthenticatedRequest, @Param('chatId', ParseCUIDPipe) chatId: string, @Body('userId', ParseCUIDPipe, UserExistsPipe) user: User ){ 
-    return this.chatService.addMember(req, user, chatId)
+  async addMember( @Req() req: AuthenticatedRequest, @Param('chatId', ParseCUIDPipe) chatId: string, @Body('userId', ParseCUIDPipe, UserExistsPipe) member: User ){ 
+    return this.chatService.addMember(req, member, chatId)
   }
 
   @UseGuards(ChatAccessGuard, ChatAdminGuard)
   @Patch('groups/:chatId/members/:memberId')
-  async editMember( @Param('chatId', ParseCUIDPipe) chatId: string, @Param('memberId', ParseCUIDPipe, UserExistsPipe) user: User, @Body('role', ParseUppercasePipe, new ParseEnumPipe(CHAT_ROLE)) role: CHAT_ROLE) {
-
+  async editMember( @Req() req: AuthenticatedRequest, @Param('chatId', ParseCUIDPipe) chatId: string, @Param('memberId', ParseCUIDPipe, UserExistsPipe) member: User, @Body('role', ParseUppercasePipe, new ParseEnumPipe(CHAT_ROLE)) role: CHAT_ROLE) {
+    return this.chatService.editMember(req, member, role, chatId)
   }
 
     
   @UseGuards(ChatAccessGuard)
   @Delete('/groups/:chatId/members/me')
   async leaveGroup(@Req() req: AuthenticatedRequest, @Param('chatId', ParseCUIDPipe ) chatId: string){ 
-
+    return this.chatService.leaveGroup(req, chatId)
   }
 
 
   @UseGuards(ChatAccessGuard, ChatAdminGuard)
-  @Delete('/groups/:chatId/members/:userId')
+  @Delete('/groups/:chatId/members/:memberId')
   async removeMember(
     @Req() req: AuthenticatedRequest, 
     @Param('chatId', ParseCUIDPipe) chatId: string, 
-    @Param('userId', ParseCUIDPipe, UserExistsPipe) userId: User ){ 
-
+    @Param('memberId', ParseCUIDPipe, UserExistsPipe) member: User ){ 
+      return this.chatService.removeMember(req, chatId, member)
   }
 
 

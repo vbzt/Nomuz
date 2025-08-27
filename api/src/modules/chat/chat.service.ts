@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto'
 import { encrypt } from 'src/common/security/encrypt';
 import { decrypt } from 'src/common/security/decrypt';
-import { PrismaClient, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 import { CreateGroupDTO } from './dto/create-group.dto';
 import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
@@ -90,10 +90,9 @@ export class ChatService {
 
   async updateGroupChat(req: AuthenticatedRequest, data: UpdateGroupDTO, chatId: string){
     if(!data.adminOnly && !data.name ) return { message: "Nenhuma alteração foi feita"} 
-    const group = await this.prismaService.chat.findUnique( { where: { id: chatId } } )
-    if( data.adminOnly ) group!.onlyAdmin = data.adminOnly
-    if( data.name ) group!.name = data.name
-    const updatedGroup = await this.prismaService.chat.update( { where: { id: chatId }, data: { ...group }, select: { name: true, onlyAdmin: true, users: true }}) 
+    const updatedGroup = await this.prismaService.chat.update({ where: { id: chatId }, data: { ...(data.adminOnly !== undefined && { onlyAdmin: data.adminOnly }), ...(data.name && { name: data.name }),},
+  select: { name: true, onlyAdmin: true, users: true }
+})
     return { success: true, message: `Grupo atualizado por: ${req.user.name}`, updatedGroup }
   }
 
@@ -112,6 +111,11 @@ export class ChatService {
     return { success: true, message: `${req.user.name} adicionou ${member.name} ao grupo.`, newMember}
   }
 
+  async editMember(req: AuthenticatedRequest, member: User, role: CHAT_ROLE, chatId: string){ 
+    const updatedMember = await this.prismaService.chatUser.update( { where: { chat_id_user_id: { chat_id: chatId, user_id: member.id } }, data: { role } })
+    return { success: true, message: `${req.user.name} atualizou o papel de ${member.name} para ${role} no grupo.`, updatedMember}
+  }
+
   async leaveGroup(req: AuthenticatedRequest, chatId: string){ 
     const removedMember = await this.prismaService.chatUser.delete( { where: { chat_id_user_id : { chat_id: chatId, user_id: req.user.id } } }  )
     return { success: true, message: `${req.user.name} saiu do grupo.`, removedMember}
@@ -124,7 +128,6 @@ export class ChatService {
 
   async sendMsg(content: string, chatId: string, userId: string){ 
     const encryptedMessage = this.encryptMsg(content)
-    console.log(chatId)
     await this.chatExists(chatId)
     const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: this.generateMessageHash(chatId, userId, encryptedMessage), chat_id: chatId, sender_id: userId} } )
     savedMessage.content = content
