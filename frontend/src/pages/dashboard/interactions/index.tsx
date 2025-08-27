@@ -17,6 +17,7 @@ import {
 import { IoAdd } from "react-icons/io5";
 import ContentMessageUser from "@/components/ContentMessageUser";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
+import ContentGroupUser from "@/components/ContentGroupUser";
 
 export default function Interactions() {
     return (
@@ -46,17 +47,23 @@ export default function Interactions() {
                         </Select>
                         <CreateGroupDialog />
                     </div>
+                    <ContentGroupUser
+                        name_group="Grupo teste"
+                        content_preview="Victor: mensagem teste"
+                        notification={12}
+                        time="08:45"
+                    />
                     <ContentMessageUser
                         img="/image.jpg"
                         name="Penis"
-                        content="Gosto de lamber parede"
+                        content_preview="Gosto de lamber parede"
                         notification={3}
                         time="12:04"
                     />
                     <ContentMessageUser
                         img="/image.jpg"
                         name="Tosse"
-                        content="Dipirona 300mg"
+                        content_preview="Dipirona 300mg"
                         notification={1}
                         time="09:04"
                     />
