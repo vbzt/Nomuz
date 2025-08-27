@@ -86,7 +86,7 @@ export class ChatController {
   async removeMember(
     @Req() req: AuthenticatedRequest, 
     @Param('chatId', ParseCUIDPipe) chatId: string, 
-    @Param('userId', ParseCUIDPipe, UserExistsPipe) userId: string ){ 
+    @Param('userId', ParseCUIDPipe, UserExistsPipe) userId: User ){ 
 
   }
 

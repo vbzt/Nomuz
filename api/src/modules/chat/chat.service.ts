@@ -97,22 +97,29 @@ export class ChatService {
     return { success: true, message: `Grupo atualizado por: ${req.user.name}`, updatedGroup }
   }
 
-  async addMember(req: AuthenticatedRequest, user: User, chatId: string ){ 
+  async addMember(req: AuthenticatedRequest, member: User, chatId: string ){ 
     const newMember = await this.prismaService.chat.update( { where: { id: chatId }, 
       data: { users: 
         { create: 
           { role: 'MEMBER',
-            user_name: user.name, 
-            user: { connect: { id: user.id } }
+            user_name: member.name, 
+            user: { connect: { id: member.id } }
           }
         }
       },
       include: { users: true } 
     })
-    return { success: true, message: `${req.user.name} adicionou ${user.name} ao grupo.`, newMember}
+    return { success: true, message: `${req.user.name} adicionou ${member.name} ao grupo.`, newMember}
   }
 
   async leaveGroup(req: AuthenticatedRequest, chatId: string){ 
+    const removedMember = await this.prismaService.chatUser.delete( { where: { chat_id_user_id : { chat_id: chatId, user_id: req.user.id } } }  )
+    return { success: true, message: `${req.user.name} saiu do grupo.`, removedMember}
+  }
+
+  async removeMember(req: AuthenticatedRequest, chatId: string, member: User){  
+    const removedMember = await this.prismaService.chatUser.delete( { where: { chat_id_user_id : { chat_id: chatId, user_id: member.id } } }  )
+    return { success: true, message: `${req.user.name} removeu ${member.name} ao grupo.`, removedMember}
   }
 
   async sendMsg(content: string, chatId: string, userId: string){ 
@@ -168,7 +175,6 @@ export class ChatService {
     if(!chat) throw new NotFoundException('Esta conversa não existe.')
     return chat
   }
-
 
  generateMessageHash(chat_id: string, sender_id: string, content: string, createdAt?: Date) {
   if(!createdAt) createdAt = new Date() 
