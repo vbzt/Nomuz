@@ -13,6 +13,7 @@ import { UserService } from '../user/user.service';
 import { GroupUsersExistsPipe } from 'src/common/pipes/group-users-exists.pipe';
 import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
 import { ParseUppercasePipe } from 'src/common/pipes/parse-uppercase.pipe';
+import { ChatOwnerGuard } from 'src/common/guards/chat-owner.guard';
 
 
 
@@ -89,6 +90,12 @@ export class ChatController {
     @Param('memberId', ParseCUIDPipe, UserExistsPipe) member: User ){ 
       return this.chatService.removeMember(req, chatId, member)
   }
+
+  @UseGuards(ChatAccessGuard, ChatOwnerGuard)
+  @Delete('/groups/:chatId/')
+  async deleteGroup(@Req() req: AuthenticatedRequest, @Param('chatId', ParseCUIDPipe) chatId: string){
+    return this.deleteGroup(req, chatId)
+  } 
 
 
 

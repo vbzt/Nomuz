@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto'
 import { encrypt } from 'src/common/security/encrypt';
@@ -13,45 +13,97 @@ import { UpdateGroupDTO } from './dto/update-group.dto';
 export class ChatService {
   constructor(private readonly prismaService: PrismaService){ }
 
-  async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
-  const existingChat = await this.prismaService.chat.findFirst({
-    where: {
-      isGroup: false,
-      users: {
-        every: {
-          user_id: { in: [req.user.id, recipientUser.id] }
+  // messages 
+  async loadChats(userId: string) {
+    return this.prismaService.chat.findMany({
+      where: { users: { some: { user_id: userId } } },
+      include: {
+        users: {
+          include: {
+            user: { select: { id: true, name: true } } 
+          }
         }
+      }
+    });
+  } 
+
+  async sendMsg(content: string, chatId: string, userId: string){ 
+    const encryptedMessage = this.encryptMsg(content)
+    await this.chatExists(chatId)
+    const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: this.generateMessageHash(chatId, userId, encryptedMessage), chat_id: chatId, sender_id: userId} } )
+    savedMessage.content = content
+    return { success: true, message: 'Mensagem enviada com sucesso', data: savedMessage }
+  }
+
+  async readMessages(chatId: string) {
+    const chat = await this.prismaService.chat.findUnique({
+      where: { id: chatId },
+      include: {
+        messages: {
+          orderBy: { createdAt: 'asc' }, 
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            sender_id: true,
+            sender: { select: { id: true, name: true } },
+          },
+        },
+        users: {
+          select: {
+            user_name: true,
+            user: { select: { id: true, name: true } },
+          },
+        },
       },
-      AND: [
-        { users: { some: { user_id: req.user.id } } },
-        { users: { some: { user_id: recipientUser.id } } }
-      ],
-    },
-    include: { users: true }
-  });
+    });
 
-  if (existingChat && existingChat.users.length === 2) {
-    return existingChat; 
+    if (!chat) throw new NotFoundException('Conversa não encontrada');
+
+    return { success: true, message: 'Mensagens carregadas com sucesso', data: { messages: chat.messages.map(msg => ({ ...msg, content: decrypt(msg.content) })), users: chat.users } };
   }
 
-  const newChat = await this.prismaService.chat.create({
-    data: { 
-      isGroup: false, 
-      users: { 
-        create: [ 
-          { user_id: req.user.id, role: 'MEMBER', user_name: req.user.name }, 
-          { user_id: recipientUser.id, role: 'MEMBER', user_name: recipientUser.name } 
-        ] 
+  // chat
+  async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
+    const existingChat = await this.prismaService.chat.findFirst({
+      where: {
+        isGroup: false,
+        users: {
+          every: {
+            user_id: { in: [req.user.id, recipientUser.id] }
+          }
+        },
+        AND: [
+          { users: { some: { user_id: req.user.id } } },
+          { users: { some: { user_id: recipientUser.id } } }
+        ],
+      },
+      include: { users: true }
+    });
+
+    if (existingChat && existingChat.users.length === 2) {
+      return { success: true, message: 'Conversa privada já existente', data: existingChat };
+    }
+
+    const newChat = await this.prismaService.chat.create({
+      data: { 
+        isGroup: false, 
+        users: { 
+          create: [ 
+            { user_id: req.user.id, role: 'MEMBER', user_name: req.user.name }, 
+            { user_id: recipientUser.id, role: 'MEMBER', user_name: recipientUser.name } 
+          ] 
+        } 
       } 
-    } 
-  });
+    });
 
-  return newChat;
+    return { success: true, message: 'Conversa privada criada com sucesso', data: newChat };
   }
 
+  // groups 
   async createGroupChat(req: AuthenticatedRequest, members: User[], { name }: CreateGroupDTO){ 
     const allMembers = [ { ...req.user, role: 'OWNER' }, ...members.map(u => ({ ...u, role: 'MEMBER' })) ]
-    return this.prismaService.chat.create({
+    const group = await this.prismaService.chat.create({
         data: {
           isGroup: true,
           name: name || `Grupo de ${req.user.name}`,
@@ -73,115 +125,69 @@ export class ChatService {
           }
         }
       });
+    return { success: true, message: `Grupo "${group.name}" criado com sucesso`, data: group };
   }
-
-  async loadChats(userId: string) {
-  return this.prismaService.chat.findMany({
-    where: { users: { some: { user_id: userId } } },
-    include: {
-      users: {
-        include: {
-          user: { select: { id: true, name: true } } 
-        }
-      }
-    }
-  });
-  } 
 
   async updateGroupChat(req: AuthenticatedRequest, data: UpdateGroupDTO, chatId: string){
     if(!data.adminOnly && !data.name ) return { message: "Nenhuma alteração foi feita"} 
-    const updatedGroup = await this.prismaService.chat.update({ where: { id: chatId }, data: { ...(data.adminOnly !== undefined && { onlyAdmin: data.adminOnly }), ...(data.name && { name: data.name }),},
-  select: { name: true, onlyAdmin: true, users: true }
-})
-    return { success: true, message: `Grupo atualizado por: ${req.user.name}`, updatedGroup }
+    const updatedGroup = await this.prismaService.chat.update({ where: { id: chatId }, data: { ...(data.adminOnly !== undefined && { onlyAdmin: data.adminOnly }), ...(data.name && { name: data.name })}, select: { name: true, onlyAdmin: true, users: true }})
+    return { success: true, message: `Grupo atualizado por ${req.user.name}`, data: updatedGroup }
+  }
+
+  async deleteGroupChat(chatId: string) {
+    const [deletedMessages, deletedUsers, deletedGroup] = await this.prismaService.$transaction([
+      this.prismaService.message.deleteMany({ where: { chat_id: chatId } }),
+      this.prismaService.chatUser.deleteMany({ where: { chat_id: chatId } }),
+      this.prismaService.chat.delete({ where: { id: chatId } }),
+    ])
+    return { success: true, message: `Grupo "${deletedGroup.name}" excluído com sucesso`, data: { deletedMessages: deletedMessages.count, deletedUsers: deletedUsers.count, deletedGroup: deletedGroup.id } }
   }
 
   async addMember(req: AuthenticatedRequest, member: User, chatId: string ){ 
-    const newMember = await this.prismaService.chat.update( { where: { id: chatId }, 
-      data: { users: 
-        { create: 
-          { role: 'MEMBER',
-            user_name: member.name, 
-            user: { connect: { id: member.id } }
-          }
-        }
-      },
-      include: { users: true } 
-    })
-    return { success: true, message: `${req.user.name} adicionou ${member.name} ao grupo.`, newMember}
+    const existing = await this.prismaService.chatUser.findUnique( { where: { chat_id_user_id: { chat_id: chatId, user_id: member.id } } } )
+    if(existing) throw new BadRequestException(`${member.name} já está no grupo`)
+    const newMember = await this.prismaService.chat.update( { where: { id: chatId }, data: { users: { create: { role: 'MEMBER', user_name: member.name, user: { connect: { id: member.id } } } } }, include: { users: true } })
+    return { success: true, message: `${req.user.name} adicionou ${member.name} ao grupo`, data: newMember}
   }
 
   async editMember(req: AuthenticatedRequest, member: User, role: CHAT_ROLE, chatId: string){ 
+    const requested = await this.prismaService.chatUser.findUnique({ where: { chat_id_user_id: { chat_id: chatId, user_id: member.id } } } )
+    if(requested!.role === 'OWNER') throw new UnauthorizedException("Não é possível alterar permissões do dono do grupo")
     const updatedMember = await this.prismaService.chatUser.update( { where: { chat_id_user_id: { chat_id: chatId, user_id: member.id } }, data: { role } })
-    return { success: true, message: `${req.user.name} atualizou o papel de ${member.name} para ${role} no grupo.`, updatedMember}
+    return { success: true, message: `${req.user.name} atualizou ${member.name} para ${role}`, data: updatedMember}
   }
 
   async leaveGroup(req: AuthenticatedRequest, chatId: string){ 
-    const removedMember = await this.prismaService.chatUser.delete( { where: { chat_id_user_id : { chat_id: chatId, user_id: req.user.id } } }  )
-    return { success: true, message: `${req.user.name} saiu do grupo.`, removedMember}
+    const removedMember = await this.prismaService.chatUser.delete( { where: { chat_id_user_id : { chat_id: chatId, user_id: req.user.id } } } )
+    if(removedMember.role === "OWNER"){ 
+      const nextOwner = await this.prismaService.chatUser.findFirst({ where: { chat_id: chatId, role: { in: ["ADMIN", "MEMBER"] } }, orderBy: { updatedAt: "asc" } } )
+      if(!nextOwner) return this.deleteGroupChat(chatId)
+      const promoted = await this.prismaService.chatUser.update({ where: { id: nextOwner.id }, data: { role: 'OWNER' } })
+      return { success: true, message: `O dono ${req.user.name} saiu. Novo dono: ${promoted.user_name}`, data: { removedMember, newOwner: promoted } }
+    }
+    return { success: true, message: `${req.user.name} saiu do grupo`, data: removedMember}
   }
 
   async removeMember(req: AuthenticatedRequest, chatId: string, member: User){  
+    if(req.user.id === member.id) throw new BadRequestException("Use 'sair do grupo' para sair")
     const removedMember = await this.prismaService.chatUser.delete( { where: { chat_id_user_id : { chat_id: chatId, user_id: member.id } } }  )
-    return { success: true, message: `${req.user.name} removeu ${member.name} ao grupo.`, removedMember}
+    return { success: true, message: `${req.user.name} removeu ${member.name} do grupo`, data: removedMember}
   }
 
-  async sendMsg(content: string, chatId: string, userId: string){ 
-    const encryptedMessage = this.encryptMsg(content)
-    await this.chatExists(chatId)
-    const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: this.generateMessageHash(chatId, userId, encryptedMessage), chat_id: chatId, sender_id: userId} } )
-    savedMessage.content = content
-    return savedMessage
-  }
-
-  async readMessages(chatId: string) {
-  const chat = await this.prismaService.chat.findUnique({
-    where: { id: chatId },
-    include: {
-      messages: {
-        orderBy: { createdAt: 'asc' }, 
-        select: {
-          id: true,
-          content: true,
-          createdAt: true,
-          sender_id: true,
-          sender: { select: { id: true, name: true } },
-        },
-      },
-      users: {
-        select: {
-          user_name: true,
-          user: { select: { id: true, name: true } },
-        },
-      },
-    },
-  });
-
-  if (!chat) throw new NotFoundException('Esta conversa não existe');
-
-  return {
-    messages: chat.messages.map(msg => ({
-      ...msg,
-      content: decrypt(msg.content),
-    })),
-    users: chat.users,
-  };
-  }
-
+  // utils
   encryptMsg(content: string){ 
-    const encrypted = encrypt(content)
-    return encrypted
+    return encrypt(content)
   }
 
   async chatExists(chatId: string){
     const chat = await this.prismaService.chat.findUnique({ where: { id: chatId }, include: { users: true } } )
-    if(!chat) throw new NotFoundException('Esta conversa não existe.')
+    if(!chat) throw new NotFoundException('Conversa não encontrada.')
     return chat
   }
 
- generateMessageHash(chat_id: string, sender_id: string, content: string, createdAt?: Date) {
-  if(!createdAt) createdAt = new Date() 
-  return crypto.createHash('sha256').update(`${chat_id}:${sender_id}:${content}:${createdAt.toISOString()}`).digest('hex');
-}
+  generateMessageHash(chat_id: string, sender_id: string, content: string, createdAt?: Date) {
+    if(!createdAt) createdAt = new Date() 
+    return crypto.createHash('sha256').update(`${chat_id}:${sender_id}:${content}:${createdAt.toISOString()}`).digest('hex');
+  }
 
 }
