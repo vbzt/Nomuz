@@ -101,6 +101,11 @@ export class ChatService {
   }
 
   // groups 
+  async getMembers(chatId: string){ 
+    const members = await this.prismaService.chatUser.findMany( { where: { chat_id: chatId } } )
+    return members
+  }
+
   async createGroupChat(req: AuthenticatedRequest, members: User[], { name }: CreateGroupDTO){ 
     const allMembers = [ { ...req.user, role: 'OWNER' }, ...members.map(u => ({ ...u, role: 'MEMBER' })) ]
     const group = await this.prismaService.chat.create({
