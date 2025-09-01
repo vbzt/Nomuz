@@ -54,7 +54,20 @@ model Message {
   hash String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reads     MessageRead[]
 }
+
+model MessageRead {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  readAt    DateTime @default(now())
+
+  message   Message @relation(fields: [messageId], references: [id])
+
+  @@unique([messageId, userId])
+}
+
 
 model Chat { 
   id String @id @default(cuid())

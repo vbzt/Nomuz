@@ -1,28 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
-import { CreateDashboardDto } from './dto/create-dashboard.dto';
-import { UpdateDashboardDto } from './dto/update-dashboard.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 
+
+@UseGuards(AuthGuard)
 @Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-
-  @Get()
-  findAll() {
-    return this.dashboardService.findAll();
+  @Get('statistcs')
+  async getStatistcs(@Req() req: AuthenticatedRequest){ 
+    return this.dashboardService.getStatistics(req)
   }
-
-  @Get('commitments')
-  getCommitments(){  }
-
-  @Get('statistics')
-  statistics(){}
-
-  @Get('interactions')
-  interactions(){ }
-
-  @Get('vault')
-  vault(){ }
 
 }
