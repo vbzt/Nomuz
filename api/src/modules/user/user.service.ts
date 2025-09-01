@@ -3,15 +3,20 @@ import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt'
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class UserService {
-  constructor (private readonly prismaService: PrismaService){}
+  constructor (private readonly prismaService: PrismaService, private readonly fileService: FileService){}
 
-  async create( data: CreateUserDTO ){
-    const salt = await bcrypt.genSalt()
+  async create( data: CreateUserDTO, file: Express.Multer.File ){
+    const profilePicture = await this.fileService.upload(file)
+
+    
+    const salt = await bcrypt.genSalt() 
     data.password = await bcrypt.hash( data.password, salt )
-    return this.prismaService.user.create( { data } )
+    const user = await this.prismaService.user.create( { data } )
+    return { user, profilePicture }
   }
 
   async read(){ 

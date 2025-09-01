@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register-user.dto';
@@ -7,15 +7,17 @@ import { ResetPasswordDTO } from './dto/reset-password.dto';
 import { Request, Response } from 'express';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ParseCUIDPipe } from 'src/common/pipes/parse-cuid.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
 
   constructor( private readonly authService: AuthService ){ }
-
+  
+  @UseInterceptors(FileInterceptor('file'))
   @Post('/register')
-  async register(@Body() data: RegisterUserDTO, @Res({ passthrough: true} ) res: Response ){ 
-    const token = await this.authService.register(data)
+  async register(@Body() data: RegisterUserDTO, @Res({ passthrough: true} ) res: Response, @UploadedFile() file: Express.Multer.File ){ 
+    const token = await this.authService.register(data, file)
     res.cookie( 'jwt', token, { httpOnly: true, secure: false, sameSite: 'lax' } )
     return { message: "Usuário cadastrado com sucesso." }
   } 

@@ -1,11 +1,10 @@
 import { Transform } from "class-transformer"
-import { IsEmail, IsEnum, IsOptional, IsString, IsStrongPassword } from "class-validator"
+import { IsEmail, IsEnum, IsOptional, IsString, IsStrongPassword, Min } from "class-validator"
 import { ROLE } from "src/common/enums/user-role.enum"
 
 
 
 export class CreateUserDTO{ 
-  
   @IsString()
   name: string
 

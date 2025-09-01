@@ -1,14 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UserExistsPipe } from 'src/common/pipes/user-exists.pipe';
 import { ParseCUIDPipe } from 'src/common/pipes/parse-cuid.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileService } from '../file/file.service';
 
 @Controller('users')
 export class UserController {
 
-  constructor( private readonly userService: UserService){}
+  constructor( private readonly userService: UserService, private readonly fileService: FileService){}
   
   @Get()
   async showAll(){ 
@@ -20,10 +22,11 @@ export class UserController {
     return this.userService.readOne(id)
   }
 
+  @UseInterceptors(FileInterceptor('file'))
   @Post()
-  async create(@Body() data: CreateUserDTO){ 
-    return this.userService.create(data)
-  }
+  async create(@Body() data: CreateUserDTO, @UploadedFile() file: Express.Multer.File){ 
+    return this.userService.create(data, file) 
+  } 
 
   @Patch(":id")
   async update(@Body() data: UpdateUserDTO, @Param('id', ParseCUIDPipe, UserExistsPipe ) id: string){
