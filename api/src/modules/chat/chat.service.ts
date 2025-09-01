@@ -63,6 +63,11 @@ export class ChatService {
     return { success: true, message: 'Mensagens carregadas com sucesso', data: { messages: chat.messages.map(msg => ({ ...msg, content: decrypt(msg.content) })), users: chat.users } };
   }
 
+  async markMessageAsRead(messageId: string, userId: string){
+    const readMessage = await this.prismaService.messageRead.upsert( { where: { messageId_userId: { messageId, userId } }, create: { messageId, userId, readAt: new Date()}, update: { readAt: new Date()} })
+    return readMessage
+  }
+
   // chat
   async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
     const existingChat = await this.prismaService.chat.findFirst({

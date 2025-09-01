@@ -87,7 +87,9 @@ export class ChatController {
   @Get('/:chatId/members')
   async getMembers(
     @Param("chatId", ParseCUIDPipe) chatId: string
-  ){}
+  ){
+    return this.chatService.getMembers(chatId)
+  }
 
   @UseGuards(ChatAccessGuard, ChatAdminGuard)
   @Post('/:chatId/members')

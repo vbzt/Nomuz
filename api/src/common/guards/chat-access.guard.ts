@@ -13,7 +13,7 @@ export class ChatAccessGuard implements CanActivate {
     
     const participant = await this.prismaService.chatUser.findFirst( { where: { chat_id: chatId, user_id: userId }, select: { chat: true, role: true } } )
     if(!participant) throw new NotFoundException("Esta conversa não existe ou não pertence a este usuário")
-    if(participant.chat.onlyAdmin && participant.role !== CHAT_ROLE.ADMIN || participant.role !== CHAT_ROLE.OWNER) throw new UnauthorizedException("Somente administradores podem mandar mensagem neste grupo")
+    if(participant.chat.onlyAdmin && participant.role !== CHAT_ROLE.ADMIN && participant.role !== CHAT_ROLE.OWNER) throw new UnauthorizedException("Somente administradores podem mandar mensagem neste grupo")
     return true
   }
 }
