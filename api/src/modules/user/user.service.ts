@@ -4,13 +4,16 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt'
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { FileService } from '../file/file.service';
+import { defaultProfilePicture } from 'src/common/constants/profile-picture';
 
 @Injectable()
 export class UserService {
   constructor (private readonly prismaService: PrismaService, private readonly fileService: FileService){}
 
   async create( data: CreateUserDTO, file: Express.Multer.File ){
-    const profilePicture = await this.fileService.upload(file)
+    let profilePicture
+    if(!file) profilePicture = await this.fileService.upload(defaultProfilePicture)
+    profilePicture = await this.fileService.upload(file)
 
     
     const salt = await bcrypt.genSalt() 
