@@ -3,6 +3,7 @@ import { env } from "src/common/utils/env";
 import * as bcrypt from "bcrypt"
 import { ROLE } from "src/common/enums/user-role.enum";
 import 'dotenv/config';
+import { defaultProfilePicture } from "src/common/constants/profile-picture";
 
 
 const prisma = new PrismaClient()
@@ -21,7 +22,8 @@ async function main() {
       email,
       name: email.split('@')[0],
       password: hashedPass,
-      role: ROLE.ADMIN 
+      role: ROLE.ADMIN,
+      profilePicture: defaultProfilePicture
     }})
     console.log(`Admin criado ${email}`)
   }

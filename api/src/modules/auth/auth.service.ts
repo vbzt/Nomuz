@@ -47,10 +47,10 @@ export class AuthService {
     }
 
     
-    async register( data: RegisterUserDTO, file: Express.Multer.File ){ 
+    async register( data: RegisterUserDTO, file?: Express.Multer.File ){ 
       if(data.confirmPassword !== data.password) throw new BadRequestException('A senha e a confirmação da senha devem ser iguais.')
       const { confirmPassword, ...userData} = data
-      const { user, profilePicture } = await this.userService.create(userData, file);
+      const { user } = await this.userService.create(userData, file);
       const token = this.createJwtToken(user)
   
       return token 

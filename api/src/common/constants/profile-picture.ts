@@ -1,1 +1,1 @@
-export const defaultProfilePicture = '/images/user-picture-default.png';
+export const defaultProfilePicture = 'https://vqmvnimrzrzhuoqeggoo.supabase.co/storage/v1/object/sign/files/uploads/user-picture-default.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mZGI3NTM5ZS1hZTE1LTQzOGUtYmI5My0yY2Q0ZGZjODc4YWMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJmaWxlcy91cGxvYWRzL3VzZXItcGljdHVyZS1kZWZhdWx0LnBuZyIsImlhdCI6MTc1NjgxMTcwNywiZXhwIjozMzI2MTI3NTcwN30.AfJPEAxLjeUUdGDmfttwGGY7Umie6nNG4NjDRyAWbqE';

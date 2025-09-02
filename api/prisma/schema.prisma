@@ -39,6 +39,7 @@ model User {
   commitment_user Commitment[]
   chat_user ChatUser[]
   user_token ResetPasswordToken[]
+  profilePicture String
 }
 
 model Message { 

@@ -10,16 +10,19 @@ import { defaultProfilePicture } from 'src/common/constants/profile-picture';
 export class UserService {
   constructor (private readonly prismaService: PrismaService, private readonly fileService: FileService){}
 
-  async create( data: CreateUserDTO, file: Express.Multer.File ){
+  async create( data: CreateUserDTO, file?: Express.Multer.File ){
     let profilePicture
-    if(!file) profilePicture = await this.fileService.upload(defaultProfilePicture)
-    profilePicture = await this.fileService.upload(file)
+    if(file){ 
+      profilePicture = await this.fileService.upload(file)
+    }else{
+      profilePicture = defaultProfilePicture
+    }
 
     
     const salt = await bcrypt.genSalt() 
     data.password = await bcrypt.hash( data.password, salt )
-    const user = await this.prismaService.user.create( { data } )
-    return { user, profilePicture }
+    const user = await this.prismaService.user.create( { data: { ...data, profilePicture } } )
+    return { user }
   }
 
   async read(){ 
@@ -31,13 +34,17 @@ export class UserService {
     return user
   }
 
-  async update(data: UpdateUserDTO, id: string){ 
+  async update(data: UpdateUserDTO, id: string, file?: Express.Multer.File){ 
+    let profilePicture
+    if(file){ 
+      profilePicture = await this.fileService.upload(file)
+    } 
     if(data.password){ 
       const salt = await bcrypt.genSalt()
       data.password = await bcrypt.hash( data.password, salt )
     }
 
-    const updatedUser = await this.prismaService.user.update({ where: { id }, data, select: {name: true, email: true} })
+    const updatedUser = await this.prismaService.user.update({ where: { id }, data: { ...data, profilePicture: profilePicture }, select: {name: true, email: true} })
     return updatedUser
   }
 

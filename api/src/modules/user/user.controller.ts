@@ -27,10 +27,11 @@ export class UserController {
   async create(@Body() data: CreateUserDTO, @UploadedFile() file: Express.Multer.File){ 
     return this.userService.create(data, file) 
   } 
-
+  
+  @UseInterceptors(FileInterceptor('file'))
   @Patch(":id")
-  async update(@Body() data: UpdateUserDTO, @Param('id', ParseCUIDPipe, UserExistsPipe ) id: string){
-    return this.userService.update(data, id)
+  async update(@Body() data: UpdateUserDTO, @Param('id', ParseCUIDPipe, UserExistsPipe ) id: string, @UploadedFile() file: Express.Multer.File){
+    return this.userService.update(data, id, file)
   }
 
   @Delete(":id")
