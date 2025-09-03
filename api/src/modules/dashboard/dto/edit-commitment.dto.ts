@@ -4,7 +4,4 @@ import { IsEmail, IsOptional } from "class-validator";
 
 
 export class EditCommitmentDTO extends PartialType(CreateCommitmentDTO){ 
-  @IsOptional()
-  @IsEmail()
-  clientEmail: string
 }

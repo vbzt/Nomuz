@@ -54,8 +54,7 @@ async createCommitment(req: AuthenticatedRequest, client: User, data: CreateComm
 }
 
 async editCommitment(id: string, data: EditCommitmentDTO, client?: User){
-  const { clientEmail, ...commitmentData } = data
-  const updatedCommitment = await this.prismaService.commitment.update( { where: { id }, data: { ...commitmentData, ...(client && { client_id: client.id,client_name: client.name } ) } } )
+  const updatedCommitment = await this.prismaService.commitment.update( { where: { id }, data: { ...data, ...(client && { client_id: client.id, client_name: client.name } ) } } )
   return { message: "Compromisso atualizado com sucesso.", updatedCommitment }
 } 
 

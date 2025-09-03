@@ -8,6 +8,7 @@ import { CreateCommitmentDTO } from './dto/create-commitment.dto';
 import { EditCommitmentDTO } from './dto/edit-commitment.dto';
 import { UserService } from '../user/user.service';
 import { CommitmentAccessGuard } from 'src/common/guards/commitment-access.guard';
+import { ParseCUIDPipe } from 'src/common/pipes/parse-cuid.pipe';
 
 
 @UseGuards(AuthGuard)
@@ -27,18 +28,18 @@ export class DashboardController {
     @Body("email", UserExistsPipe) client: User,
     @Body() data: CreateCommitmentDTO 
     ){ 
-    
+    return this.dashboardService.createCommitment(req, client, data)
   }
 
   @UseGuards(CommitmentAccessGuard)
   @Patch('commitments/:id')
   async editCommitment(
-    @Req() req: AuthenticatedRequest, 
-    @Body() data: EditCommitmentDTO 
+    @Param('id', ParseCUIDPipe) id: string, 
+    @Body() data: EditCommitmentDTO, 
+    @Body("clientEmail", UserExistsPipe) client?: User
     ){ 
-    if(data.clientEmail){ 
-      const client = await new UserExistsPipe(this.userService).transform( data.clientEmail, { type: "body"})
-    }
+    if(client) return this.dashboardService.editCommitment(id, data, client)
+    return this.dashboardService.editCommitment(id, data)
   }
 
 }
