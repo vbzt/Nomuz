@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDashboardDto } from './dto/create-dashboard.dto';
-import { UpdateDashboardDto } from './dto/update-dashboard.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateCommitmentDTO } from './dto/create-commitment.dto';
+import { UserService } from '../user/user.service';
+import { User } from '@prisma/client';
+import { EditCommitmentDTO } from './dto/edit-commitment.dto';
 
 @Injectable()
 export class DashboardService {
-  constructor( private readonly prismaService: PrismaService){}
+  constructor( private readonly prismaService: PrismaService, private readonly userService: UserService){}
   
   async getStatistics(req: AuthenticatedRequest) {
   const now = new Date()
@@ -44,6 +46,23 @@ export class DashboardService {
   }
 
   return result
+}
+
+async createCommitment(req: AuthenticatedRequest, client: User, data: CreateCommitmentDTO){ 
+  const commitment = await this.prismaService.commitment.create( { data: { ...data,  client_id: client.id, user_id: req.user.id, client_name: client.name } } )
+  return { message: "Compromisso criado com sucesso.", commitment}
+}
+
+async editCommitment(id: string, data: EditCommitmentDTO, client?: User){
+  const { clientEmail, ...commitmentData } = data
+  const updatedCommitment = await this.prismaService.commitment.update( { where: { id }, data: { ...commitmentData, ...(client && { client_id: client.id,client_name: client.name } ) } } )
+  return { message: "Compromisso atualizado com sucesso.", updatedCommitment }
+} 
+
+async commitmentExists(id: string, userId: string){ 
+  const commitment = await this.prismaService.commitment.findUnique( { where: { id, user_id: userId}})
+  if(!commitment) throw new NotFoundException('Este compromisso não existe.')
+  return true
 }
 
 }
