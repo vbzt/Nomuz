@@ -42,3 +42,4 @@
 [2025-08-24T08:34:19-03:00] feat: handler now supports logging system
 [2025-08-24T14:13:38-03:00] feat: gateway now supports email notifications
 [2025-08-24T18:16:29-03:00] ajustes finos
+[2025-09-04T00:45:19-03:00] corrigindo uns bugs
