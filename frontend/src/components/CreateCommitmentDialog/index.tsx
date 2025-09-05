@@ -28,7 +28,6 @@ export default function CreateCommitmentDialog() {
                     <DialogTitle>Criar compromisso</DialogTitle>
                     <DialogDescription className="text-[#b3b3b3] mb-[10px]">Adicione as informações necessárias para criar um compromisso.</DialogDescription>
                     <form>
-                        <Input type="text" id="name" placeholder="Nome do cliente" className="bg-[#0c0c13] border border-[#15151e] rounded-[10px] mb-[10px]" />
                         <Input type="email" id="email" placeholder="E-mail do cliente" className="bg-[#0c0c13] border border-[#15151e] rounded-[10px] mb-[10px]" />
                         <Input type="text" id="commitment" placeholder="Motivo do compromisso" className="bg-[#0c0c13] border border-[#15151e] rounded-[10px] mb-[10px]" />
                         <Calendar
