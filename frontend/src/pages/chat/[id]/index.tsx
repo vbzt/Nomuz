@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useParams } from 'next/navigation';
+import { TbPaperclip } from "react-icons/tb";
+import { TbSend2 } from "react-icons/tb";
+import { TbMenu, TbArrowLeft, TbSearch } from "react-icons/tb";
 
 interface Message {
   id: string;
@@ -129,52 +132,72 @@ export default function ChatPage() {
   };
 
   return (
-    <main className="p-5 min-h-[calc(100vh-65px)] flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-4">Chat {id}</h2>
-
-      {loading ? (
-        <p className="text-gray-400">Carregando mensagens...</p>
-      ) : (
-        <div className="border bg-[#0c0c13] rounded-xl p-4 h-[360px] w-full max-w-[700px] overflow-y-auto mb-4 flex flex-col gap-2">
-          {messages.length === 0 ? (
-            <p className="text-gray-500">Nenhuma mensagem ainda.</p>
-          ) : (
-            messages.map(m => {
-              const isSender = m.sender_id === userId;
-              const status = isSender ? readReceipts[m.id] ?? 'Sent' : undefined; // só o remetente vê o status
-              return (
-                <div key={m.id} className={`flex ${isSender ? 'justify-end' : 'justify-start'} mb-2`}>
-                  <div className={`max-w-[70%] px-3 py-2 rounded-lg ${isSender ? 'bg-[#36577d] text-white' : 'bg-[#272727] text-gray-200'}`}>
-                    {!isSender && (
-                      <div className="text-sm mb-1">
-                        <strong className="text-[#4677af]">{getSenderName(m)}</strong>
-                      </div>
-                    )}
-                    <div>{m.content}</div>
-                    {status && <div className="text-xs text-gray-400 mt-1 text-right">{status}</div>}
-                  </div>
-                </div>
-              );
-            })
-          )}
-          <div ref={messagesEndRef} />
+    <main className="py-[15px] min-h-[calc(100vh-65px)] flex flex-col items-center w-full">
+      <div className='flex items-center justify-between flex-col max-w-[1000px] w-[90%] h-full flex-1'>
+        <div className='w-full border border-[#15151e] flex items-center justify-between rounded-[8px] p-2'>
+          <div className='flex flex-row items-center justify-center'>
+            <img src="/image.jpg" width={40} height={40} alt="Image user" className="h-[40px] w-[40px] rounded-[5px] mr-[10px]" />
+            <h1>{id}</h1>
+          </div>
+          <div>
+            <button className='h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
+              <TbArrowLeft />
+            </button>
+            <button className='ml-[10px] h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
+              <TbSearch />
+            </button>
+            <button className='ml-[10px] h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
+              <TbMenu />
+            </button>
+          </div>
         </div>
-      )}
 
-      <div className="flex gap-2 w-full max-w-[700px]">
-        <input
-          value={newMessage}
-          onChange={e => setNewMessage(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && sendMessage()}
-          placeholder="Digite sua mensagem..."
-          className="flex-1 bg-[#15151e] border border-[#272727] rounded-lg px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#36577d]"
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-[#36577d] hover:bg-[#254161] text-white px-4 py-2 rounded-lg font-semibold"
-        >
-          Enviar
-        </button>
+        {loading ? (
+          <p className="text-gray-400">Carregando mensagens...</p>
+        ) : (
+          <div className="border bg-[#0c0c13] rounded-xl p-4 h-[360px] w-full max-w-[700px] overflow-y-auto mb-4 flex flex-col gap-2">
+            {messages.length === 0 ? (
+              <p className="text-gray-500">Nenhuma mensagem ainda.</p>
+            ) : (
+              messages.map(m => {
+                const isSender = m.sender_id === userId;
+                const status = isSender ? readReceipts[m.id] ?? 'Sent' : undefined; // só o remetente vê o status
+                return (
+                  <div key={m.id} className={`flex ${isSender ? 'justify-end' : 'justify-start'} mb-2`}>
+                    <div className={`max-w-[70%] px-3 py-2 rounded-lg ${isSender ? 'bg-[#36577d] text-white' : 'bg-[#272727] text-gray-200'}`}>
+                      {!isSender && (
+                        <div className="text-sm mb-1">
+                          <strong className="text-[#4677af]">{getSenderName(m)}</strong>
+                        </div>
+                      )}
+                      <div>{m.content}</div>
+                      {status && <div className="text-xs text-gray-400 mt-1 text-right">{status}</div>}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+        <footer className='w-full flex items-center justify-center gap-[10px]'>
+          <input
+            value={newMessage}
+            onChange={e => setNewMessage(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && sendMessage()}
+            placeholder="Digite sua mensagem..."
+            className="text-[15px] flex-1 h-[40px] w-full bg-[#15151e] transition duration-[0.2s] ease-in-out  border border-[#272727] rounded-[10px] px-[16px] py-[8px] text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#36577d]"
+          />
+          <button className='h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
+            <TbPaperclip />
+          </button>
+          <button
+            onClick={sendMessage}
+            className="h-[40px]  bg-[#36577d] hover:bg-[#254161] transition duration-[0.2s] cursor-pointer ease-in-out text-white px-[11px] py-[10px] rounded-[10px] font-semibold"
+          >
+            <TbSend2 />
+          </button>
+        </footer>
       </div>
     </main>
   );
