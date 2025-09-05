@@ -36,7 +36,8 @@ model User {
   message Message[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  commitment_user Commitment[]
+  commitment_user Commitment[] @relation("commitment_user")
+  commitment_client Commitment[] @relation("commitment_client")
   chat_user ChatUser[]
   user_token ResetPasswordToken[]
   profilePicture String
@@ -116,8 +117,12 @@ model ResetPasswordToken{
 
 model Commitment{ 
   id String @id @default(cuid())
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation("commitment_user", fields: [user_id], references: [id])
   user_id String
+
+  client User @relation("commitment_client", fields: [client_id], references: [id])
+  client_name String
+  client_id String
 
   title String 
   dueDate DateTime
