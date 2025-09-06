@@ -107,3 +107,4 @@
 [2025-09-04T22:02:01-03:00] corrigindo uns bugs
 [2025-09-05T15:52:00-03:00] feat: pipe now supports webhook integration
 [2025-09-05T16:39:17-03:00] mais um fix
+[2025-09-06T20:28:11-03:00] refactor(auth): streamline decorator
