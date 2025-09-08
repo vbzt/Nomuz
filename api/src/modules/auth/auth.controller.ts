@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register-user.dto';
@@ -13,7 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class AuthController {
 
   constructor( private readonly authService: AuthService ){ }
-  
+   
   @UseInterceptors(FileInterceptor('file'))
   @Post('/register')
   async register(@Body() data: RegisterUserDTO, @Res({ passthrough: true} ) res: Response, @UploadedFile() file: Express.Multer.File ){ 
@@ -40,7 +40,7 @@ export class AuthController {
     return this.authService.forgotPassword(data)
   }
 
-  @Post("/reset/:token")
+  @Patch("/reset/:token")
   async resetPassword(@Body() data: ResetPasswordDTO, @Param("token", ParseCUIDPipe) token: string, @Res({ passthrough: true } ) res: Response){
     const newJwtToken =  await this.authService.resetPassword(data, token)
     res.cookie( 'jwt', newJwtToken, { httpOnly: true, secure: false, sameSite: 'lax' } )
