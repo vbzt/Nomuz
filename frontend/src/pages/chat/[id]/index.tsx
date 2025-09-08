@@ -52,6 +52,7 @@ export default function ChatPage() {
       .then(res => res.json())
       .then(res => {
         if (res.success && res.data) {
+          console.log(res.data)
           setMessages(Array.isArray(res.data.messages) ? res.data.messages : []);
           setUsers(Array.isArray(res.data.users) ? res.data.users : []);
         }

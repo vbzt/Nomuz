@@ -14,18 +14,29 @@ export class ChatService {
   constructor(private readonly prismaService: PrismaService){ }
 
   // messages 
-  async loadChats(userId: string) {
-    return this.prismaService.chat.findMany({
-      where: { users: { some: { user_id: userId } } },
-      include: {
-        users: {
-          include: {
-            user: { select: { id: true, name: true } } 
-          }
-        }
-      }
-    });
-  } 
+ async loadChats(userId: string) {
+  const unreadCondition = {
+    reads: { none: { userId } },
+    sender_id: { not: userId },
+  };
+  console.log('teste')
+  return this.prismaService.chat.findMany({
+    where: { users: { some: { user_id: userId } } },
+    include: {
+      users: {
+        include: {
+          user: { select: { id: true, name: true, profilePicture: true } },
+        },
+      },
+      _count: {
+        select: {
+          messages: { where: unreadCondition },
+        },
+      },
+    },
+  });
+}
+
 
   async sendMsg(content: string, chatId: string, userId: string){ 
     const encryptedMessage = this.encryptMsg(content)

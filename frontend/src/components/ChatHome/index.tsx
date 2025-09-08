@@ -6,7 +6,7 @@ import Link from 'next/link';
 interface ChatUser {
   user_id: string;
   user_name: string;
-  user: { id: string; name: string };
+  user: { id: string; name: string; profilePicture?: string };
 }
 
 interface Chat {
@@ -16,8 +16,6 @@ interface Chat {
   users: ChatUser[];
   lastMessage?: { text: string; createdAt: string };
 }
-
-
 
 export default function ChatList() {
   const [user, setUser] = useState('');
@@ -72,6 +70,7 @@ export default function ChatList() {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
         setChats(data);
       })
       .catch((err) => {
@@ -109,27 +108,76 @@ export default function ChatList() {
     <div>
       <h1>📜 Lista de Chats</h1>
       {chats.length === 0 && <p>Nenhum chat encontrado.</p>}
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {chats.map((chat) => {
-  const otherUser = chat.users.find((u) => u.user.name !== user);
-  const chatName = chat.isGroup
-    ? chat.name || 'Grupo sem nome'
-    : otherUser?.user.name || 'Chat sem nome';
+          const otherUser = chat.users.find((u) => u.user.name !== user);
+          const chatName = chat.isGroup
+            ? chat.name || 'Grupo sem nome'
+            : otherUser?.user.name || 'Chat sem nome';
+          const profilePicture = chat.isGroup
+            ? undefined 
+            : otherUser?.user.profilePicture;
 
-  return (
-    <li key={chat.id}>
-      <Link href={`/chat/${chat.id}`} legacyBehavior>
-        <a>
-          <strong>{chatName}</strong>
-          {chat.lastMessage && (
-            <p style={{ fontSize: '0.8rem', color: '#666' }}>
-              {chat.lastMessage.text}
-            </p>
-          )}
-        </a>
-      </Link>
-    </li>
-  );
+          return (
+            <li
+              key={chat.id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '10px',
+              }}
+            >
+              <Link href={`/chat/${chat.id}`} legacyBehavior>
+                <a
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    gap: '10px',
+                  }}
+                >
+                  {profilePicture ? (
+                    <img
+                      src={profilePicture}
+                      alt={`${chatName} foto`}
+                      width={40}
+                      height={40}
+                      style={{
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        flexShrink: 0,
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '50%',
+                        background: '#ddd',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.2rem',
+                      }}
+                    >
+                      👥
+                    </div>
+                  )}
+                  <div>
+                    <strong>{chatName}</strong>
+                    {chat.lastMessage && (
+                      <p style={{ fontSize: '0.8rem', color: '#666' }}>
+                        {chat.lastMessage.text}
+                      </p>
+                    )}
+                  </div>
+                </a>
+              </Link>
+            </li>
+          );
         })}
       </ul>
     </div>
