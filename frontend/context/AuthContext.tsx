@@ -1,42 +1,69 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { createContext, useContext, useEffect, useState } from "react"
+import { getCurrentUser, login as apiLogin, register as apiRegister } from "@/lib/api/auth"
+import { apiFetch } from "@/lib/api/client" 
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
+  id: string
+  name: string
+  email: string
 }
 
-interface AuthContextProps {
-  user: User | null;
-  loading: boolean;
-  logout: () => void;
+interface AuthContextType {
+  user: User | null
+  loading: boolean
+  login: (email: string, password: string) => Promise<void>
+  register: (data: any, file?: File) => Promise<void>
+  logout: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
-useEffect(() => {
-  axios.get<User>("http://localhost:3001/auth/me", { withCredentials: true })
-    .then((res) => setUser(res.data))
-    .catch(() => setUser(null))
-    .finally(() => setLoading(false));
-}, []);
+  useEffect(() => {
+    refreshUser()
+  }, [])
 
+  async function refreshUser() {
+    try {
+      setLoading(true)
+      const res = await getCurrentUser()
+      setUser(res)
+    } catch {
+      setUser(null)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  function logout() {
-    axios.post("http://localhost:3001/auth/logout", {}, { withCredentials: true })
-      .then(() => setUser(null));
+  async function login(email: string, password: string) {
+    const logged = await apiLogin(email, password)
+    await refreshUser()
+    return logged
+  }
+
+  async function register(data: { name: string, email: string, password: string, confirmPassword: string, laywerRegistration?: string }, file?: File) {
+    await apiRegister(data, file)
+    await refreshUser()
+  }
+
+  async function logout() {
+    await apiFetch("/auth/logout", { method: "POST" })
+    setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider")
+  return ctx
+}

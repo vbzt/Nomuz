@@ -20,6 +20,14 @@ export async function register(data: { name: string, email: string, password: st
 
 }
 
-export async function login(email: string, password: string) {
+export async function login( email: string, password: string ) {
   return apiFetch('/auth/login', { method: "POST", body: JSON.stringify( { email, password } ) } )
+}
+
+export async function forgotPassword ( email: string ){ 
+  return apiFetch('/auth/forgot', { method: "POST", body: JSON.stringify({email})})
+}
+
+export async function resetPassword ( resetToken: string, data: { email: string, password: string, confirmPassword: string } ){ 
+  return apiFetch(`/auth/reset/${resetToken}`, { method: "PATCH", body: JSON.stringify( { ...data } ) } )
 }

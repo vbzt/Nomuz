@@ -15,7 +15,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     headers,
   });
 
-  if (!res.ok) throw new Error("Erro: " + res.status);
+  if (!res.ok) console.log(res)
 
   return res.json();
 }
