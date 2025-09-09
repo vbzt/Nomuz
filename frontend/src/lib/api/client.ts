@@ -15,7 +15,11 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     headers,
   });
 
-  if (!res.ok) console.log(res)
+  if (!res.ok){ 
+    const error = await res.json()
+    if(error.message.length === 1) error.message = error.message[0]
+    throw new Error(error.message)
+  }
 
   return res.json();
 }

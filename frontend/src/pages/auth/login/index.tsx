@@ -25,11 +25,10 @@ export default function Login() {
 
         try {
             const logged = await login(email, password)
-            console.log(logged)
             const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
-            // router.push(callbackUrl)
+            router.push(callbackUrl)
         } catch (e:any) {
-            setError(e) 
+            setError(e.message) 
         }finally{
             setLoading(false)
         }
@@ -43,7 +42,7 @@ export default function Login() {
             <div className='flex items-start justify-center flex-col max-w-[400px] w-[90%]'>
                 <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="mt-[20px] mb-[5px] scroll-m-20 text-center text-[24px] font-bold tracking-tight text-balance">Acesse sua conta</motion.h1>
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.1 }} className="text-[#b3b3b3] mb-[30px] text-[14px]">Entre para gerenciar seus conteúdos com segurança.</motion.p>
-                <form className="w-full">
+                <form onSubmit={handleSubmit} className="w-full">
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }} className="grid w-full items-center gap-3 mb-[20px]">
                           <Label htmlFor="email">Email</Label>
                         <Input value={email} type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13]" onChange={(e) => setEmail(e.target.value)}  />
@@ -63,7 +62,7 @@ export default function Login() {
                         <p className="text-red-500 text-sm mb-3">{error}</p>
                     )}
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}>
-                        <Button onClick={handleSubmit} className="mb-[20px] w-full bg-[#36577d] hover:bg-[#254161]" type="submit">Entrar</Button>
+                        <Button className="mb-[20px] w-full bg-[#36577d] hover:bg-[#254161]" type="submit">Entrar</Button>
                     </motion.div>
                     <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }} className="text-[14px] mb-[20px]">Não possui uma conta? <a className="underline" href="/auth/register">Crie uma</a></motion.p>
                 </form>
