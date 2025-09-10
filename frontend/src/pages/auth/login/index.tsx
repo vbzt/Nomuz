@@ -27,7 +27,7 @@ export default function Login() {
             const logged = await login(email, password)
             console.log(logged)
             const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
-            // router.push(callbackUrl)
+            router.push(callbackUrl)
         } catch (e:any) {
             setError(e) 
         }finally{

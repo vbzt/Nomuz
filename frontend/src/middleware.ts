@@ -5,7 +5,7 @@ export default function middleware(req: NextRequest ){
   const token = req.cookies.get('jwt')?.value
   
   const isAuth = !!token
-  const isAuthPage = req.nextUrl.pathname.startsWith('/auth')
+  const isAuthPage = req.nextUrl.pathname.startsWith('/auth/')
 
   if (!isAuth && !isAuthPage) {
     const loginUrl = new URL("/auth/login", req.url);
@@ -19,5 +19,8 @@ export default function middleware(req: NextRequest ){
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"], 
-};
+  matcher: [
+    "/dashboard/:path*",
+    "/auth/:path*"
+  ],
+}

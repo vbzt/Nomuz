@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { getCurrentUser, login as apiLogin, register as apiRegister } from "@/lib/api/auth"
+import { getCurrentUser, login as apiLogin, register as apiRegister,  } from "@/lib/api/auth"
 import { apiFetch } from "@/lib/api/client" 
 
 interface User {
   id: string
   name: string
   email: string
+  profilePicture: string
 }
 
 interface AuthContextType {
@@ -15,6 +16,7 @@ interface AuthContextType {
   register: (data: any, file?: File) => Promise<void>
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
+  me: () => Promise<User>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -39,6 +41,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function me() {
+    const user = await getCurrentUser()
+    return user
+  }
+
   async function login(email: string, password: string) {
     const logged = await apiLogin(email, password)
     await refreshUser()
@@ -46,8 +53,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function register(data: { name: string, email: string, password: string, confirmPassword: string, laywerRegistration?: string }, file?: File) {
-    await apiRegister(data, file)
+    const registered = await apiRegister(data, file)
     await refreshUser()
+    return registered
   }
 
   async function logout() {
@@ -56,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, me }}>
       {children}
     </AuthContext.Provider>
   )

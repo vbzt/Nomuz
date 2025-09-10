@@ -20,6 +20,8 @@ import CreateGroupDialog from "@/components/CreateGroupDialog";
 import ContentGroupUser from "@/components/ContentGroupUser";
 
 export default function Interactions() {
+    
+
     return (
         <SidebarProvider>
             <main className="flex items-start justify-center flex-row w-full">
