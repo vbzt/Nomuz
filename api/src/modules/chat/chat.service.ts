@@ -38,7 +38,7 @@ export class ChatService {
 }
 
 
-  async sendMsg(content: string, chatId: string, userId: string){ 
+  async sendMsg(content: string,  chatId: string, userId: string, files?: Array<Express.Multer.File>,){ 
     const encryptedMessage = this.encryptMsg(content)
     await this.chatExists(chatId)
     const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: this.generateMessageHash(chatId, userId, encryptedMessage), chat_id: chatId, sender_id: userId} } )
