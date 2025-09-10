@@ -28,8 +28,20 @@ import {
 import { TbLogout } from "react-icons/tb";
 import Image from "next/image";
 import imageteste from '../../../public/image.jpg'
+import { useAuth } from "../../../context/AuthContext";
+import { useEffect } from "react";
 
 export default function SidebarActions() {
+
+    const { user, logout } = useAuth()
+    useEffect(() => { 
+       console.log(user)
+    }, [user])
+
+    const handleLogout = async () => { 
+      await logout()
+    }
+
     const { state } = useSidebar()
 
     function ToPageURL(link: string) {
@@ -72,7 +84,7 @@ export default function SidebarActions() {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button className="mb-[8px] flex justify-center items-center bg-[#0c0c13] p-[2px] rounded-[10px] border border-[#15151e] h-9 w-9 transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a] hover:text-[#fff] group">
-                                <Image className="rounded-[10px]" src={imageteste} alt="teste" />
+                                <Image className="rounded-[10px]" width={36} height={36} src={user!.profilePicture} alt="teste" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-[238.5px]" align="start">
@@ -80,7 +92,7 @@ export default function SidebarActions() {
                             <DropdownMenuItem className="text-[#b3b3b3] hover:bg-[#36577d19] hover:text-[#fff] transition duration-[0.2s] ease-in-out cursor-pointer" onClick={() => window.location.href = '/'}>Início</DropdownMenuItem>
                             <DropdownMenuItem className="text-[#b3b3b3] hover:bg-[#36577d19] hover:text-[#fff] transition duration-[0.2s] ease-in-out cursor-pointer" onClick={() => window.location.href = '/dashboard/settings'}>Configurações</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-[#c72e38] hover:bg-[#c72e38] hover:text-[#fff] transition duration-[0.2s] cursor-pointer ease-in-out group">
+                            <DropdownMenuItem className="text-[#c72e38] hover:bg-[#c72e38] hover:text-[#fff] transition duration-[0.2s] cursor-pointer ease-in-out group" onClick={handleLogout}>
                                 Log out
                                 <TbLogout className="text-[#c72e38] group-hover:text-[#fff] transition duration-[0.2s] ease-in-out" />
                             </DropdownMenuItem>

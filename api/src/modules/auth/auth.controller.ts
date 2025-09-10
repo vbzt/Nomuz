@@ -32,7 +32,7 @@ export class AuthController {
   @Post('logout')
   async logout( @Res({ passthrough: true } ) res: Response ){ 
     res.clearCookie('jwt')
-    return
+    return { success: true }
   }
 
   @Post('/forgot')   

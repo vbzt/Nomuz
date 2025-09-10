@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { getCurrentUser, login as apiLogin, register as apiRegister,  } from "@/lib/api/auth"
 import { apiFetch } from "@/lib/api/client" 
+import { useRouter } from "next/router"
 
 interface User {
   id: string
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     refreshUser()
@@ -61,7 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function logout() {
     await apiFetch("/auth/logout", { method: "POST" })
     setUser(null)
-  }
+    router.push('/auth/login')
+  } 
 
   return (
     <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, me }}>

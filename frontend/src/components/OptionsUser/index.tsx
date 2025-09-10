@@ -20,12 +20,15 @@ import { useAuth } from "../../../context/AuthContext";
 import { useEffect, useState } from "react";
 
 export default function OptionsUser() {
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
     
     useEffect(() => { 
        console.log(user)
     }, [user])
-    
+
+  const handleLogout = async () => { 
+    await logout()
+  }
 
 
     return (
@@ -50,7 +53,7 @@ export default function OptionsUser() {
                 <DropdownMenuItem className="text-[#b3b3b3] hover:bg-[#36577d19] hover:text-[#fff] transition duration-[0.2s] ease-in-out cursor-pointer" onClick={() => window.location.href = '/'}>Início</DropdownMenuItem>
                 <DropdownMenuItem className="text-[#b3b3b3] hover:bg-[#36577d19] hover:text-[#fff] transition duration-[0.2s] ease-in-out cursor-pointer" onClick={() => window.location.href = '/dashboard/settings'}>Configurações</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-[#c72e38] hover:bg-[#c72e38] hover:text-[#fff] transition duration-[0.2s] cursor-pointer ease-in-out group">
+                <DropdownMenuItem className="text-[#c72e38] hover:bg-[#c72e38] hover:text-[#fff] transition duration-[0.2s] cursor-pointer ease-in-out group" onClick={handleLogout}>
                     Log out
                     <TbLogout className="text-[#c72e38] group-hover:text-[#fff] transition duration-[0.2s] ease-in-out" />
                 </DropdownMenuItem>
