@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseEnumPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseEnumPipe, Patch, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ChatService } from './chat.service';
 import { User } from '@prisma/client';
@@ -13,6 +13,7 @@ import { GroupUsersExistsPipe } from 'src/common/pipes/group-users-exists.pipe';
 import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
 import { ParseUppercasePipe } from 'src/common/pipes/parse-uppercase.pipe';
 import { ChatOwnerGuard } from 'src/common/guards/chat-owner.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard)
 @Controller('chats')
@@ -47,13 +48,15 @@ export class ChatController {
   }
 
   @UseGuards(ChatAccessGuard)
+  @UseInterceptors(FileInterceptor('files'))
   @Post('/:chatId/messages')
   async sendMsg(
     @Body('content') content: string,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('chatId', ParseCUIDPipe) chatId: string,
     @Req() req: AuthenticatedRequest
   ) {
-    return this.chatService.sendMsg(content, chatId, req.user.id)
+    return this.chatService.sendMsg(content, chatId, req.user.id, files)
   }
 
   // group chats

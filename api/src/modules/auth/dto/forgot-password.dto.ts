@@ -1,7 +1,7 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail } from "class-validator";
 
 
 export class ForgotPasswordDTO{ 
-  @IsString()
+  @IsEmail({}, { message: "Formato de e-mail inválido"})
   email: string 
 }  
