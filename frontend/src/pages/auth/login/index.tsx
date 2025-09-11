@@ -24,7 +24,7 @@ export default function Login() {
         setLoading(true)
 
         try {
-            const logged = await login(email, password)
+            await login(email, password)
             const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
             router.push(callbackUrl)
         } catch (e:any) {
@@ -62,7 +62,8 @@ export default function Login() {
                         <p className="text-red-500 text-sm mb-3">{error}</p>
                     )}
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}>
-                        <Button className="mb-[20px] w-full bg-[#36577d] hover:bg-[#254161]" type="submit">Entrar</Button>
+                       <Button disabled={loading} className="mb-[20px] w-full bg-[#36577d] hover:bg-[#254161]" type="submit">{loading ? "Entrando..." : "Entrar"}</Button>
+
                     </motion.div>
                     <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }} className="text-[14px] mb-[20px]">Não possui uma conta? <a className="underline" href="/auth/register">Crie uma</a></motion.p>
                 </form>

@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button"
 import { TbCheck } from "react-icons/tb";
 import ConfirmationAlert from "@/components/ConfirmationAlert";
 import SidebarActions from "@/components/SidebarActions";
+import { useAuth } from "../../../../context/AuthContext";
 
 export default function Settings() {
+    const { user } = useAuth()
+
     return (
         <SidebarProvider>
             <main className="flex items-start justify-center flex-row w-full">
@@ -20,13 +23,13 @@ export default function Settings() {
                     <div className="p-[20px] flex items-start justify-center flex-col border border-[#15151e] w-full rounded-[10px]">
                         <h1 className="text-[#b3b3b3] font-semibold text-[12px] mb-[10px]">Foto de perfil</h1>
                         <label htmlFor="inputImage">
-                            <img className="rounded-full h-[80px] w-[80px] border borde-[#15151e] transition duration-[0.2s] cursor-pointer ease-in-out p-[6px] mb-[20px] hover:bg-[#ffffff0a] hover:brightness-60 hover:border-[#21212b]" src="/image.jpg" alt="" />
+                            <img  className="rounded-full h-[80px] w-[80px] border borde-[#15151e] transition duration-[0.2s] cursor-pointer ease-in-out p-[6px] mb-[20px] hover:bg-[#ffffff0a] hover:brightness-60 hover:border-[#21212b]" src= { user?.profilePicture} alt="" />
                         </label>
                         <input type="file" id="inputImage" className="hidden" />
                         <form className="w-full">
                             <h1 className="text-[#b3b3b3] font-semibold text-[12px] mb-[10px]">Nome de usuário</h1>
                             <div className="flex flex-row items-center justify-center mb-[20px]">
-                                <Input required type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13] h-9" />
+                                <Input value={user?.name} required type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13] h-9" />
                                 <ConfirmationAlert
                                     title="Deseja mesmo alterar o nome de usuário?"
                                     desc="Essa ação fará com que seu nome de usuário seja alterado, você poderá alterar novamente mais tarde."
@@ -37,7 +40,7 @@ export default function Settings() {
                         <form className="w-full">
                             <h1 className="text-[#b3b3b3] font-semibold text-[12px] mb-[10px]">E-mail</h1>
                             <div className="flex flex-row">
-                                <Input required type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13] mb-[0px] h-9" />
+                                <Input value={user?.email} required type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13] mb-[0px] h-9" />
                                 <ConfirmationAlert
                                     title="Deseja mesmo alterar seu E-mail?"
                                     desc="Essa ação fará com que seu e-mail de usuário seja alterado, você poderá alterar novamente mais tarde."
