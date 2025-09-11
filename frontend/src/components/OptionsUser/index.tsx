@@ -16,12 +16,9 @@ import { Button } from "../ui/button"
 import { TbLogout } from "react-icons/tb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { TbChevronDown } from "react-icons/tb";
-<<<<<<< HEAD
 import SkeletonLoading from "../SkeletonLoading";
-=======
 import { useAuth } from "../../../context/AuthContext";
 import { useEffect, useState } from "react";
->>>>>>> d17ca15f99f8ec761949dfcb24d0fce45b6bb29a
 
 export default function OptionsUser() {
     const { user, logout } = useAuth()
