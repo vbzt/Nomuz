@@ -8,18 +8,15 @@ import { Request, Response } from 'express';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ParseCUIDPipe } from 'src/common/pipes/parse-cuid.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateUserDTO } from '../user/dto/update-user.dto';
-import { UserService } from '../user/user.service';
-import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 
 @Controller('auth')
 export class AuthController {
 
-  constructor( private readonly authService: AuthService, private readonly userService: UserService ){ }
+  constructor( private readonly authService: AuthService ){ }
    
   @UseInterceptors(FileInterceptor('file'))
   @Post('/register')
-  async register(@Body() data: RegisterUserDTO, @Res({ passthrough: true} ) res: Response, @UploadedFile() file?: Express.Multer.File ){ 
+  async register(@Body() data: RegisterUserDTO, @Res({ passthrough: true} ) res: Response, @UploadedFile() file: Express.Multer.File ){ 
     const token = await this.authService.register(data, file)
     res.cookie( 'jwt', token, { httpOnly: true, secure: false, sameSite: 'lax' } )
     return { message: "Usuário cadastrado com sucesso." }
@@ -48,13 +45,6 @@ export class AuthController {
     const newJwtToken =  await this.authService.resetPassword(data, token)
     res.cookie( 'jwt', newJwtToken, { httpOnly: true, secure: false, sameSite: 'lax' } )
     return { message: "Senha atualizada com sucesso."}
-  }
-
-  @UseGuards(AuthGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  @Patch('/update')
-  async updateUser(@Body() data: UpdateUserDTO, @Req() req: AuthenticatedRequest, @UploadedFile() file?: Express.Multer.File){
-    return this.userService.update(data, req.user.id, file )
   }
 
   @UseGuards(AuthGuard)
