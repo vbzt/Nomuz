@@ -1,19 +1,19 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ROLE } from '@prisma/client';
 import { Observable } from 'rxjs';
-import { Reflector } from '@nestjs/core';
-import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { ROLE } from '../enums/user-role.enum';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor ( private readonly userService: UserService){}
 
-  async canActivate(context: ExecutionContext): Promise<boolean>{
+  async canActivate(context: ExecutionContext):Promise<boolean> {
     const req = context.switchToHttp().getRequest()
-    const user = req.user
+    const user = req.user 
+    const userRole = await this.userService.readOne(user.id)
+    if(!userRole || userRole.role !== ROLE.ADMIN) throw new UnauthorizedException('Você deve ser um admin para acessar essa rota.')
 
-    const userRole = await this.prismaService.user.findUnique( { where: { id: user.id }, select: { role: true } } )
-    if(userRole?.role !== ROLE.ADMIN) return false
-    return true
+    return true 
+    
   }
 }
