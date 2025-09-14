@@ -4,15 +4,16 @@ interface ContentUserGroupProps {
     name_group: string,
     content_preview: string,
     time: string,
-    notification: number
+    notification: number,
+    picture: string
 }
 
-export default function ContentGroupUser({ name_group, content_preview, time, notification }: ContentUserGroupProps) {
+export default function ContentGroupUser({ name_group, content_preview, time, notification, picture }: ContentUserGroupProps) {
     return (
         <div className="flex itemc-cemter justify-between flex-row w-full p-2.5 border mb-[10px] border-[#15151e] rounded-[10px] transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a]">
             <div className="flex flex-row">
                 <div className="flex items-center justify-center h-[50px] w-[50px] rounded-[5px] mr-[10px] bg-[#ffffff0a]">
-                    <TbUsers size={20}/>
+                     <img src={picture} width={50} height={50} alt= 'User Profile Picture' className="h-[50px] w-[50px] rounded-[5px] "/>
                 </div>
                 <div className="flex flex-col items-start justify-center">
                     <h1 className="text-[16.5px]">{name_group}</h1>
@@ -21,8 +22,9 @@ export default function ContentGroupUser({ name_group, content_preview, time, no
             </div>
             <div className="flex flex-col items-end justify-center" >
                 <h2 className="text-[10px] mb-[10px]">{time}</h2>
-                <div className="rounded-full h-[20px] w-[20px] text-[12px] bg-[#3a773f] flex items-center justify-center">{notification}</div>
+                { notification > 1 && ( <div className="rounded-full h-[20px] w-[20px] text-[12px] bg-[#3a773f] flex items-center justify-center">{notification}</div> ) }
             </div>
         </div>
     )
 }
+

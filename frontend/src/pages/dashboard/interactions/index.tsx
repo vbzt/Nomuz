@@ -18,9 +18,28 @@ import { IoAdd } from "react-icons/io5";
 import ContentMessageUser from "@/components/ContentMessageUser";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
 import ContentGroupUser from "@/components/ContentGroupUser";
+import { useEffect, useState } from "react";
+import { getChats } from "@/lib/api/chat";
+import { ChatUser } from "@/interfaces/chat-user";
+import { useAuth } from "../../../../context/AuthContext";
 
 export default function Interactions() {
-    
+    const { user } = useAuth()
+    const [chats, setChats] = useState<any[]>([])
+    async function fetchChats() {
+        try {
+          const chats = await getChats()
+          console.log(chats[0].users)
+          setChats(chats)
+        } catch (err) {
+          console.error("Erro ao buscar chats:", err)
+        }
+      }
+
+    useEffect(() => {
+      fetchChats()
+    }, [])
+
 
     return (
         <SidebarProvider>
@@ -49,26 +68,29 @@ export default function Interactions() {
                         </Select>
                         <CreateGroupDialog />
                     </div>
-                    <ContentGroupUser
-                        name_group="Grupo teste"
-                        content_preview="Victor: mensagem teste"
-                        notification={12}
-                        time="08:45"
-                    />
-                    <ContentMessageUser
-                        img="/image.jpg"
-                        name="Penis"
-                        content_preview="Gosto de lamber parede"
-                        notification={3}
-                        time="12:04"
-                    />
-                    <ContentMessageUser
-                        img="/image.jpg"
-                        name="Tosse"
-                        content_preview="Dipirona 300mg"
-                        notification={1}
-                        time="09:04"
-                    />
+                    { chats.map( chat => { 
+                        const lastMessage = chat.messages[0]
+
+                        let contentPreview = ""
+                        if (chat.isGroup) {
+                          contentPreview = lastMessage ? `${lastMessage.sender.name}: ${lastMessage.content}` : " "
+                        } else {
+                          contentPreview = lastMessage ? lastMessage.content : " "
+                        }
+
+                        const otherUser = !chat.isGroup ? chat.users.find((u: ChatUser) => u.user.id !== user!.id)?.user : null
+
+                        return ( 
+                        <ContentGroupUser
+                            key={chat}
+                            name_group= { chat.name ? chat.name : otherUser.name}
+                            content_preview= { contentPreview }
+                            notification={chat._count.messages}
+                            picture= { otherUser.profilePicture }
+                            time={lastMessage ? new Date(lastMessage.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}
+                        />
+                        )
+                    })}
                 </div>
             </main>
         </SidebarProvider>

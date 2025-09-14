@@ -14,5 +14,5 @@ export async function getChats() {
 }
 
 export async function sendMessage(chatId: string,){ 
-  
-}
+  return apiFetch(`/chats/${chatId}`)
+} 

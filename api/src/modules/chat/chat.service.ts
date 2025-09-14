@@ -19,14 +19,22 @@ export class ChatService {
     reads: { none: { userId } },
     sender_id: { not: userId },
   };
-  console.log('teste')
-  return this.prismaService.chat.findMany({
+
+  const chats = await this.prismaService.chat.findMany({
     where: { users: { some: { user_id: userId } } },
     include: {
       users: {
         include: {
           user: { select: { id: true, name: true, profilePicture: true } },
         },
+      },
+      messages: {
+        take: 1,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          sender: { select: { id: true, name: true } },
+        },
+        omit: { hash: true}
       },
       _count: {
         select: {
@@ -35,7 +43,20 @@ export class ChatService {
       },
     },
   });
+
+  return chats.map(chat => {
+    const lastMsg = chat.messages[0];
+    if (lastMsg) {
+      try {
+        lastMsg.content = decrypt(lastMsg.content);
+      } catch {
+        lastMsg.content = " ";
+      }
+    }
+    return chat;
+  });
 }
+
 
 
   async sendMsg(content: string,  chatId: string, userId: string, files?: Array<Express.Multer.File>,){ 
