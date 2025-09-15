@@ -22,7 +22,7 @@ export default function ContentGroupUser({ name_group, content_preview, time, no
             </div>
             <div className="flex flex-col items-end justify-center" >
                 <h2 className="text-[10px] mb-[10px]">{time}</h2>
-                { notification > 1 && ( <div className="rounded-full h-[20px] w-[20px] text-[12px] bg-[#3a773f] flex items-center justify-center">{notification}</div> ) }
+                { notification >= 1 && ( <div className="rounded-full h-[20px] w-[20px] text-[12px] bg-[#3a773f] flex items-center justify-center">{notification}</div> ) }
             </div>
         </div>
     )

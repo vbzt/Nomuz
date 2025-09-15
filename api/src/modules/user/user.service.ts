@@ -36,21 +36,21 @@ export class UserService {
     return this.prismaService.user.findMany( { omit: { password: true } } )
   }
 
-async readOne(identifier: string) {
-  const user = await this.prismaService.user.findFirst({
-    where: {
-      OR: [
-        { id: identifier },
-        { email: identifier },
-      ],
-    },
-    omit: {
-      password: true,
-    },
-  })
-
-  return user
-}
+  async readOne(identifier: string) {
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        OR: [
+          { id: identifier },
+          { email: identifier },
+        ],
+      },
+      omit: {
+        password: true,
+      },
+    })
+  
+    return user
+  }
 
 
   async update(data: UpdateUserDTO, id: string, file?: Express.Multer.File){ 

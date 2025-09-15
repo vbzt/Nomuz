@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { getChats } from "@/lib/api/chat";
 import { ChatUser } from "@/interfaces/chat-user";
 import { useAuth } from "../../../../context/AuthContext";
+import CreatePrivateDialog from "@/components/CreatePrivateChatDialog";
 
 export default function Interactions() {
     const { user } = useAuth()
@@ -29,7 +30,6 @@ export default function Interactions() {
     async function fetchChats() {
         try {
           const chats = await getChats()
-          console.log(chats[0].users)
           setChats(chats)
         } catch (err) {
           console.error("Erro ao buscar chats:", err)
@@ -66,8 +66,12 @@ export default function Interactions() {
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        <CreatePrivateDialog / > 
                         <CreateGroupDialog />
                     </div>
+                    { chats.length === 0 && ( 
+                      <p className="text-[#b3b3b3] text-sm text-center mt-4">Nenhuma conversa ainda, que tal começar uma?</p>
+                    )}
                     { chats.map( chat => { 
                         const lastMessage = chat.messages[0]
 

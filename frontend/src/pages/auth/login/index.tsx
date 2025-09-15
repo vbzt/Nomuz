@@ -7,6 +7,7 @@ import { motion } from "motion/react"
 import { useAuth } from "@/../context/AuthContext"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function Login() {
     const { login }= useAuth()
@@ -28,7 +29,7 @@ export default function Login() {
             const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
             router.push(callbackUrl)
         } catch (e:any) {
-            setError(e.message) 
+            toast.error(e.message)
         }finally{
             setLoading(false)
         }
