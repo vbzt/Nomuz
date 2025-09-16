@@ -102,6 +102,8 @@ export class ChatService {
 
   // chat
   async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
+    if(recipientUser.id === req.user.id) throw new BadRequestException('Não é possível criar uma conversa consigo mesmo.')
+
     const existingChat = await this.prismaService.chat.findFirst({
       where: {
         isGroup: false,
@@ -141,7 +143,7 @@ export class ChatService {
   async getMembers(chatId: string){ 
     const members = await this.prismaService.chatUser.findMany( { where: { chat_id: chatId } } )
     return members
-  }
+  } 
 
   async createGroupChat(req: AuthenticatedRequest, members: User[], { name }: CreateGroupDTO){ 
     const allMembers = [ { ...req.user, role: 'OWNER' }, ...members.map(u => ({ ...u, role: 'MEMBER' })) ]

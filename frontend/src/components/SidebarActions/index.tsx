@@ -34,9 +34,7 @@ import { useEffect } from "react";
 export default function SidebarActions() {
 
     const { user, logout } = useAuth()
-    useEffect(() => { 
-       console.log(user)
-    }, [user])
+
 
     const handleLogout = async () => { 
       await logout()

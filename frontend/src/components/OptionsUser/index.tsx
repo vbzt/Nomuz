@@ -23,9 +23,6 @@ import { useEffect, useState } from "react";
 export default function OptionsUser() {
     const { user, logout } = useAuth()
     
-    useEffect(() => { 
-       console.log(user)
-    }, [user])
 
   const handleLogout = async () => { 
     await logout()
