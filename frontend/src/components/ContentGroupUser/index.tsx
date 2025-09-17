@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { TbUsers } from "react-icons/tb";
 
 interface ContentUserGroupProps {
@@ -5,12 +6,15 @@ interface ContentUserGroupProps {
     content_preview: string,
     time: string,
     notification: number,
-    picture: string
+    picture: string,
+    id: string
 }
 
-export default function ContentGroupUser({ name_group, content_preview, time, notification, picture }: ContentUserGroupProps) {
+
+export default function ContentGroupUser({ name_group, content_preview, time, notification, picture, id }: ContentUserGroupProps) {
+    const router = useRouter()
     return (
-        <div className="flex itemc-cemter justify-between flex-row w-full p-2.5 border mb-[10px] border-[#15151e] rounded-[10px] transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a]">
+        <div className="flex itemc-cemter justify-between flex-row w-full p-2.5 border mb-[10px] border-[#15151e] rounded-[10px] transition duration-[0.2s] cursor-pointer ease-in-out hover:bg-[#ffffff0a]" onClick={() => router.push(`/dashboard/interactions/${id}`) }>
             <div className="flex flex-row">
                 <div className="flex items-center justify-center h-[50px] w-[50px] rounded-[5px] mr-[10px] bg-[#ffffff0a]">
                      <img src={picture} width={50} height={50} alt= 'User Profile Picture' className="h-[50px] w-[50px] rounded-[5px] "/>

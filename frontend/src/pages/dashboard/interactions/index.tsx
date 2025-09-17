@@ -91,6 +91,7 @@ export default function Interactions() {
                             content_preview= { contentPreview }
                             notification={chat._count.messages}
                             picture= { otherUser.profilePicture }
+                            id = { chat.id}
                             time={lastMessage ? new Date(lastMessage.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}
                         />
                         )

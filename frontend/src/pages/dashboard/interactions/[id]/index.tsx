@@ -1,12 +1,14 @@
 import SideBar from "@/components/SideBar"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { getChat } from "@/lib/api/chat"
 import { useAuth } from "../../../../../context/AuthContext"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
 import { TbArrowLeft, TbMenu, TbPaperclip, TbSearch, TbSend2 } from "react-icons/tb"
 import SidebarActions from "@/components/SidebarActions"
+import { useRouter } from "next/router"
+import { io, Socket } from "socket.io-client"
 
 interface Message {
   id: string;
@@ -30,6 +32,8 @@ export default function Interactions() {
   const { user } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])  
   const params = useParams<{ id: string }>();
+  const router = useRouter()
+  const socketRef = useRef<Socket | null>(null);
   
   const [ sender, setSender ] = useState<ChatUser>()
   const [ receiver, setReceiver ] = useState<ChatUser>()
@@ -49,6 +53,18 @@ export default function Interactions() {
       toast.error(err.message)
     }
   }
+
+  const connectSocket = () => { 
+    if (!user?.id || !params.id) return
+    const socket = io('http://localhost:3005', { withCredentials: true, transports: ['websocket'] })
+    socketRef.current = socket
+
+    socket.emit('joinChat', params.id)
+
+
+  }
+
+  const setupSocketListeners = (socket: Socket) => { }
 
   useEffect(() => {
     if (params?.id) fetchChats();
@@ -72,7 +88,7 @@ export default function Interactions() {
             <h1>{receiver?.user_name}</h1>
           </div>
           <div>
-            <button className='h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
+            <button onClick={() => router.push("/dashboard/interactions") } className='h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
               <TbArrowLeft />
             </button>
             <button className='ml-[10px] h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
@@ -84,7 +100,7 @@ export default function Interactions() {
           </div>
         </div>
 
-              <div className="border bg-[#0c0c13] rounded-xl p-4 h-[500px] w-full overflow-y-auto mb-4 flex flex-col gap-2">
+              <div className="border bg-[#0c0c13] rounded-xl p-4 h-[400px] w-full overflow-y-auto mb-4 flex flex-col gap-2">
                 {messages.length === 0 && (
                   <p className="text-gray-500">Nenhuma mensagem ainda.</p>
                 )}
