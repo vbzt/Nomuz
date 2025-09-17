@@ -8,6 +8,7 @@ import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-sessio
 import { CreateGroupDTO } from './dto/create-group.dto';
 import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
 import { UpdateGroupDTO } from './dto/update-group.dto';
+import { defaultProfilePicture } from 'src/common/constants/profile-picture';
 
 @Injectable()
 export class ChatService {
@@ -57,8 +58,6 @@ export class ChatService {
   });
 }
 
-
-
   async sendMsg(content: string,  chatId: string, userId: string, files?: Array<Express.Multer.File>,){ 
     const encryptedMessage = this.encryptMsg(content)
     await this.chatExists(chatId)
@@ -78,13 +77,13 @@ export class ChatService {
             content: true,
             createdAt: true,
             sender_id: true,
-            sender: { select: { id: true, name: true } },
+            sender: { select: { id: true, name: true, profilePicture: true } },
           },
         },
         users: {
           select: {
             user_name: true,
-            user: { select: { id: true, name: true } },
+            user: { select: { id: true, name: true, profilePicture: true } },
           },
         },
       },
@@ -103,7 +102,8 @@ export class ChatService {
   // chat
   async createPrivateChat(req: AuthenticatedRequest, recipientUser: User){  
     if(recipientUser.id === req.user.id) throw new BadRequestException('Não é possível criar uma conversa consigo mesmo.')
-
+    const recipient = await this.prismaService.user.findUnique({ where: { id: recipientUser.id } });
+    if (!recipient) throw new NotFoundException('Usuário destinatário não encontrado'); 
     const existingChat = await this.prismaService.chat.findFirst({
       where: {
         isGroup: false,
@@ -125,16 +125,27 @@ export class ChatService {
     }
 
     const newChat = await this.prismaService.chat.create({
-      data: { 
-        isGroup: false, 
-        users: { 
-          create: [ 
-            { user_id: req.user.id, role: 'MEMBER', user_name: req.user.name }, 
-            { user_id: recipientUser.id, role: 'MEMBER', user_name: recipientUser.name } 
-          ] 
-        } 
-      } 
+      data: {
+        isGroup: false,
+        users: {
+          create: [
+            {
+              role: 'MEMBER',
+              user_name: req.user.name,
+              user_profile_picture: req.user.profilePicture,
+              user: { connect: { id: req.user.id } }
+            },
+            {
+              role: 'MEMBER',
+              user_name: recipientUser.name,
+              user_profile_picture: recipientUser.profilePicture,
+              user: { connect: { id: recipientUser.id } }
+            }
+          ]
+        }
+      }
     });
+
 
     return { success: true, message: 'Conversa privada criada com sucesso', data: newChat };
   }
@@ -154,6 +165,7 @@ export class ChatService {
           users: {
             create: allMembers.map(m => ({
               role: CHAT_ROLE[m.role as keyof typeof CHAT_ROLE],
+              user_profile_picture: m.profilePicture, 
               user_name: m.name, 
               user: {
                 connect: { id: m.id }
@@ -190,7 +202,7 @@ export class ChatService {
   async addMember(req: AuthenticatedRequest, member: User, chatId: string ){ 
     const existing = await this.prismaService.chatUser.findUnique( { where: { chat_id_user_id: { chat_id: chatId, user_id: member.id } } } )
     if(existing) throw new BadRequestException(`${member.name} já está no grupo`)
-    const newMember = await this.prismaService.chat.update( { where: { id: chatId }, data: { users: { create: { role: 'MEMBER', user_name: member.name, user: { connect: { id: member.id } } } } }, include: { users: true } })
+    const newMember = await this.prismaService.chat.update( { where: { id: chatId }, data: { users: { create: { user_profile_picture: member.profilePicture ,role: 'MEMBER', user_name: member.name, user: { connect: { id: member.id } } } } }, include: { users: true } })
     return { success: true, message: `${req.user.name} adicionou ${member.name} ao grupo`, data: newMember}
   }
 

@@ -5,7 +5,7 @@ import { getChat } from "@/lib/api/chat"
 import { useAuth } from "../../../../../context/AuthContext"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
-import { TbArrowLeft, TbMenu, TbSearch } from "react-icons/tb"
+import { TbArrowLeft, TbMenu, TbPaperclip, TbSearch, TbSend2 } from "react-icons/tb"
 import SidebarActions from "@/components/SidebarActions"
 
 interface Message {
@@ -21,7 +21,8 @@ interface ChatUser {
   user_name: string,
   user: { 
     id: string,
-    name: string
+    name: string,
+    profilePicture: string,
   }
 }
 
@@ -37,11 +38,13 @@ export default function Interactions() {
     try {
       const chat = await getChat(params.id)
       const users: ChatUser[]  = chat.data.users
+      console.log(users[0].user.id)
       const sender = users.find(u => u.user.id === user?.id)
       const receiver = users.find(u => u.user.id !== user?.id)
-      setSender(sender)
+      setSender(sender) 
       setReceiver(receiver)
       setMessages(chat.data.messages)
+      console.log(chat.data.messages)
     } catch (err: any) {
       toast.error(err.message)
     }
@@ -65,8 +68,8 @@ export default function Interactions() {
 
         <div className='w-full border border-[#15151e] flex items-center justify-between rounded-[8px] p-2'>
           <div className='flex flex-row items-center justify-center'>
-            <img src="/image.jpg" width={40} height={40} alt="Image user" className="h-[40px] w-[40px] rounded-[5px] mr-[10px]" />
-            <h1>{}</h1>
+            <img src = { receiver?.user.profilePicture } width={40} height={40} alt="Image user" className="h-[40px] w-[40px] rounded-[5px] mr-[10px]" />
+            <h1>{receiver?.user_name}</h1>
           </div>
           <div>
             <button className='h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out'>
@@ -81,20 +84,26 @@ export default function Interactions() {
           </div>
         </div>
 
-              <div className="border bg-[#0c0c13] rounded-xl p-4 h-[360px] w-full max-w-[700px] overflow-y-auto mb-4 flex flex-col gap-2">
+              <div className="border bg-[#0c0c13] rounded-xl p-4 h-[500px] w-full overflow-y-auto mb-4 flex flex-col gap-2">
                 {messages.length === 0 && (
                   <p className="text-gray-500">Nenhuma mensagem ainda.</p>
                 )}
-                { 
-                  messages.map(msg => 
-                    { 
-                      const isSender = msg.sender_id === sender?.id
-                      console.log(isSender)
-                      return (
-                    <p>{isSender}</p> 
+                {messages.map((msg) => {
+                  const isSender = msg.sender_id === user?.id
+                  return (
+                    <div key={msg.id} className={`flex ${isSender ? 'justify-end' : 'justify-start'} mb-2`}>
+                      <p
+                        className={`max-w-[70%] p-2 rounded-lg ${
+                          isSender
+                            ? 'bg-blue-500 text-white self-end' 
+                            : 'bg-gray-700 text-white self-start' 
+                        }`}
+                      >
+                        {msg.content}
+                      </p>
+                    </div>
                   )
-                  })
-                }
+                })}
               </div>
 
               <footer className="w-full flex items-center justify-center gap-[10px]">
@@ -103,10 +112,10 @@ export default function Interactions() {
                   className="text-[15px] flex-1 h-[40px] w-full bg-[#15151e] transition duration-[0.2s] ease-in-out border border-[#272727] rounded-[10px] px-[16px] py-[8px] text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#36577d]"
                 />
                 <button className="h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
-                  📎
+                <TbPaperclip />
                 </button>
                 <button className="h-[40px] bg-[#36577d] hover:bg-[#254161] transition duration-[0.2s] cursor-pointer ease-in-out text-white px-[11px] py-[10px] rounded-[10px] font-semibold">
-                  ➤
+                 <TbSend2 />
                 </button>
               </footer>
             </div>

@@ -90,6 +90,7 @@ model ChatUser{
   user User @relation(fields: [user_id], references: [id])
   user_id String
   user_name String
+  user_profile_picture String
 
   chat Chat @relation(fields: [chat_id], references: [id])
   chat_id String
