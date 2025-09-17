@@ -16,26 +16,42 @@ interface Message {
   sender?: { id: string; name: string };
 }
 
+interface ChatUser { 
+  id: string,
+  user_name: string,
+  user: { 
+    id: string,
+    name: string
+  }
+}
+
 export default function Interactions() {
   const { user } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])  
   const params = useParams<{ id: string }>();
+  
+  const [ sender, setSender ] = useState<ChatUser>()
+  const [ receiver, setReceiver ] = useState<ChatUser>()
 
   async function fetchChats() {
     try {
       const chat = await getChat(params.id)
-      console.log(chat)
+      const users: ChatUser[]  = chat.data.users
+      const sender = users.find(u => u.user.id === user?.id)
+      const receiver = users.find(u => u.user.id !== user?.id)
+      setSender(sender)
+      setReceiver(receiver)
       setMessages(chat.data.messages)
     } catch (err: any) {
       toast.error(err.message)
     }
   }
-useEffect(() => {
-  if (params?.id) {
-    fetchChats();
-  }
-}, [params?.id]);
 
+  useEffect(() => {
+    if (params?.id) fetchChats();
+    
+  }, [params?.id])
+  
   return (
     <SidebarProvider>
       <main className="flex items-start justify-center flex-row w-full">
@@ -69,6 +85,16 @@ useEffect(() => {
                 {messages.length === 0 && (
                   <p className="text-gray-500">Nenhuma mensagem ainda.</p>
                 )}
+                { 
+                  messages.map(msg => 
+                    { 
+                      const isSender = msg.sender_id === sender?.id
+                      console.log(isSender)
+                      return (
+                    <p>{isSender}</p> 
+                  )
+                  })
+                }
               </div>
 
               <footer className="w-full flex items-center justify-center gap-[10px]">
