@@ -32,14 +32,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const userPayload = this.authService.checkToken(token);
       socket.data.user = userPayload;  
-      console.log('User connected:', userPayload.name);
     } catch {
       socket.disconnect(true);
     }
   }
 
   handleDisconnect(socket: Socket) {
-    console.log(`User ${socket.id} disconnected`);
   }
 
   @SubscribeMessage('joinChat')

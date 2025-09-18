@@ -70,7 +70,6 @@ export default function ChatList() {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         setChats(data);
       })
       .catch((err) => {

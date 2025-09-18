@@ -28,7 +28,6 @@ export default function CreatePrivateDialog() {
       const privateChat = await createChat(user.id)
       router.push("/dashboard/interactions/"+privateChat.data.id)
      } catch (e: any) {
-      console.log(e.message)
       toast.error(e.message)
      }
     }
