@@ -21,6 +21,10 @@ export class DashboardController {
     return this.dashboardService.getStatistics(req)
   }
 
+  @Get("commitments")
+  async getCommitments(@Req() req : AuthenticatedRequest){ 
+      return this.dashboardService.getCommitments(req)
+  }
 
   @Post('commitments')
   async createCommitment(

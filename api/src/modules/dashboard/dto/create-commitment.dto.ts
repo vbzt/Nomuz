@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsDate, IsEnum, IsString, MinLength } from "class-validator";
+import { IsDate, IsEmail, IsEnum, IsString, MinLength } from "class-validator";
 
 export class CreateCommitmentDTO{ 
   
@@ -10,4 +10,7 @@ export class CreateCommitmentDTO{
   @Type (() => Date)
   @IsDate()
   dueDate: Date
+
+  @IsEmail()
+  email: string
 }

@@ -16,6 +16,7 @@ import { pt } from "date-fns/locale"
 import { IoAdd } from "react-icons/io5";
 import { IoRemove } from "react-icons/io5";
 import { TbUser } from "react-icons/tb";
+import { toast } from "sonner";
 
 export default function CreateGroupDialog() {
     const [date, setDate] = useState<Date | undefined>()
@@ -27,9 +28,9 @@ export default function CreateGroupDialog() {
             setImgs([...imgs, inputNewUser])
             setInputNewUser('')
         } else if (imgs.length >= 5) {
-            alert('penis, nao pode')
+            toast.error('')
         } else {
-            alert('penis, nao pode')
+            toast.error('Não é possivel criar um grupo vazio')
         }
     }
 

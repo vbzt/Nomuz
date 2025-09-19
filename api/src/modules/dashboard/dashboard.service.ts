@@ -49,8 +49,12 @@ export class DashboardService {
 }
 
 async createCommitment(req: AuthenticatedRequest, client: User, data: CreateCommitmentDTO){ 
-  const commitment = await this.prismaService.commitment.create( { data: { ...data,  client_id: client.id, user_id: req.user.id, client_name: client.name } } )
+  const commitment = await this.prismaService.commitment.create( { data: { dueDate: data.dueDate, title: data.title ,  client_id: client.id, user_id: req.user.id, client_name: client.name } } )
   return { message: "Compromisso criado com sucesso.", commitment}
+}
+
+async getCommitments(req: AuthenticatedRequest){
+  return this.prismaService.commitment.findMany( { where: { user_id: req.user.id }})
 }
 
 async editCommitment(id: string, data: EditCommitmentDTO, client?: User){

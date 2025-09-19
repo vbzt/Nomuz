@@ -22,8 +22,24 @@ import {
 } from "@/components/ui/select"
 import CreateCommitmentDialog from "@/components/CreateCommitmentDialog";
 import SidebarActions from "@/components/SidebarActions";
+import { useEffect } from "react";
+import { getCommitments } from "@/lib/api/commitments";
+import { toast } from "sonner";
 
 export default function Commitments() {
+  const fetchCommitments = async () => { 
+    const commitments = await getCommitments()
+    return commitments
+  }
+
+useEffect(() => { 
+  try {
+    console.log(fetchCommitments())
+  } catch (e) {
+    console.log(e)
+  }
+})
+
   return (
     <SidebarProvider>
       <main className="flex items-start justify-center flex-row w-full min-h-screen overflow-x-hidden relative">
