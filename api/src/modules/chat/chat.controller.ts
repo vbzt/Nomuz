@@ -14,22 +14,17 @@ import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
 import { ParseUppercasePipe } from 'src/common/pipes/parse-uppercase.pipe';
 import { ChatOwnerGuard } from 'src/common/guards/chat-owner.guard';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileService } from '../file/file.service';
 
 @UseGuards(AuthGuard)
 @Controller('chats')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService, private readonly fileService: FileService) {}
 
   // chats 
   @Get()
   async showAllChats(@Req() req: AuthenticatedRequest) {
     return this.chatService.loadChats(req.user.id)
-  }
-
-  @UseGuards(ChatAccessGuard)
-  @Get('/:chatId')
-  async getChat(@Param('chatId', ParseCUIDPipe) chatId: string) {
-    return this.chatService.readMessages(chatId)
   }
 
   @Post()
@@ -42,13 +37,13 @@ export class ChatController {
 
   // messages 
   @UseGuards(ChatAccessGuard)
-  @Get('/:chatId/messages')
+  @Get('/:chatId/')
   async listMessages(@Param('chatId', ParseCUIDPipe) chatId: string) {
     return this.chatService.readMessages(chatId)
   }
 
   @UseGuards(ChatAccessGuard)
-  @UseInterceptors(FilesInterceptor('files', 10, { limits: { fileSize: 64 * 1024 * 1024  }}))
+  @UseInterceptors(FilesInterceptor('files', 10, { limits: { fileSize: 64 * 1024 * 1024 } }))
   @Post('/:chatId/messages')
   async sendMsg(
     @Body('content') content: string,
@@ -56,9 +51,12 @@ export class ChatController {
     @Param('chatId', ParseCUIDPipe) chatId: string,
     @Req() req: AuthenticatedRequest
   ) {
-    return this.chatService.sendMsg(content, chatId, req.user.id, files)
-  }
+    const fileMetas = files?.length
+      ? await this.fileService.uploadMany(files)
+      : [];
 
+    return this.chatService.sendMsg(content, chatId, req.user.id, fileMetas);
+  }
   // group chats
   @Post('/groups')
   async createGroup(

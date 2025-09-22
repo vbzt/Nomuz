@@ -38,7 +38,6 @@ export default function OptionsUser() {
                             <AvatarImage src={ user?.profilePicture } />
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
-                        <SkeletonLoading height={50} width={50} />
                         <div className="flex items-start justify-center flex-col">
                             <h1 className="text-[12px]">{ user?.name }</h1>
                             <p className="text-[10px] text-[#b3b3b3]">{ user?.email }</p>

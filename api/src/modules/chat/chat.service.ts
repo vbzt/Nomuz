@@ -14,7 +14,7 @@ import { url } from 'inspector';
 import path from 'path';
 
 @Injectable()
-export class ChatService {
+export class ChatService {  
   constructor(private readonly prismaService: PrismaService, private readonly fileService: FileService){ }
 
   // messages 
@@ -60,13 +60,10 @@ export class ChatService {
     return chat;
   });
 }
-
-  async sendMsg(content: string,  chatId: string, userId: string, files?: Array<Express.Multer.File>,){ 
-    const encryptedMessage = this.encryptMsg(content)
-
+  async sendMsg( content: string, chatId: string, userId: string, files?: Array<{ id?: string; name: string; type: string; url: string; size: number }>) {
     await this.chatExists(chatId);
 
-    const fileMetas = files?.length ? await this.fileService.uploadMany(files) : [];
+    const encryptedMessage = this.encryptMsg(content);
 
     const savedMessage = await this.prismaService.message.create({
       data: {
@@ -74,24 +71,29 @@ export class ChatService {
         hash: this.generateMessageHash(chatId, userId, encryptedMessage),
         chat_id: chatId,
         sender_id: userId,
-        files: {
-          create: fileMetas.map((f) => ({
-            name: f.name,
-            type: f.type,
-            url: f.url,
-            size: f.size,
-          })),
-        },
+        files: files?.length
+          ? {
+              create: files.map((f) => ({
+                name: f.name,
+                type: f.type, 
+                url: f.url,
+                size: f.size,
+              })),
+            }
+          : undefined,
       },
       include: {
-        files: true, 
+        sender: true,
+        files: true,
       },
-    })
+    });
 
-    savedMessage.content = content
+    savedMessage.content = content;
 
-    return { success: true, message: 'Mensagem enviada com sucesso', data: savedMessage }
+    return { success: true, message: "Mensagem enviada com sucesso", data: savedMessage };
   }
+
+
 
   async readMessages(chatId: string) {
     const chat = await this.prismaService.chat.findUnique({
@@ -105,12 +107,14 @@ export class ChatService {
             createdAt: true,
             sender_id: true,
             sender: { select: { id: true, name: true, profilePicture: true } },
+            files: { select: { url: true, type: true }},
           },
         },
         users: {
           select: {
             user_name: true,
             user: { select: { id: true, name: true, profilePicture: true } },
+
           },
         },
       },
