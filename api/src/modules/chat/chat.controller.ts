@@ -13,7 +13,7 @@ import { GroupUsersExistsPipe } from 'src/common/pipes/group-users-exists.pipe';
 import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
 import { ParseUppercasePipe } from 'src/common/pipes/parse-uppercase.pipe';
 import { ChatOwnerGuard } from 'src/common/guards/chat-owner.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard)
 @Controller('chats')
@@ -48,7 +48,7 @@ export class ChatController {
   }
 
   @UseGuards(ChatAccessGuard)
-  @UseInterceptors(FileInterceptor('files'))
+  @UseInterceptors(FilesInterceptor('files', 10, { limits: { fileSize: 64 * 1024 * 1024  }}))
   @Post('/:chatId/messages')
   async sendMsg(
     @Body('content') content: string,

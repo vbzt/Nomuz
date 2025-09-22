@@ -44,20 +44,32 @@ model User {
 }
 
 model Message { 
-  id String @id @default(cuid())
+  id        String       @id @default(cuid())
+  chat      Chat         @relation(fields: [chat_id], references: [id])
+  chat_id   String
 
-  chat Chat @relation(fields: [chat_id], references: [id])
-  chat_id String
-
-  sender User @relation(fields: [sender_id], references: [id])
+  sender    User         @relation(fields: [sender_id], references: [id])
   sender_id String
 
-  content String
-  files String[]
-  hash String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  content   String
+  files     FileMeta[]  
+
+  hash      String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
   reads     MessageRead[]
+}
+
+model FileMeta { 
+  id         String   @id @default(cuid())
+  name       String
+  type       String
+  url        String
+  size       Int
+
+  message    Message? @relation(fields: [messageId], references: [id])
+  messageId  String?
 }
 
 model MessageRead {
@@ -124,6 +136,7 @@ model Commitment{
 
   client User @relation("commitment_client", fields: [client_id], references: [id])
   client_name String
+  client_email String
   client_id String
 
   title String 

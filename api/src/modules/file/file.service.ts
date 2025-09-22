@@ -40,6 +40,20 @@ export class FileService {
     };
   }
 
+  async uploadMany(files: Express.Multer.File[]) {
+  return Promise.all(
+    files.map(async (file) => {
+      const uploaded = await this.upload(file)
+      return {
+        name: file.originalname,
+        type: file.mimetype.split('/')[0],
+        url: uploaded.url,
+        size: file.size,
+      }
+    }),
+  )
+}
+
   async remove(path: string) {
     const { error } = await this.supabase.storage
       .from(this.bucket)

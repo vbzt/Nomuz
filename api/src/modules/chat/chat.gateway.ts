@@ -45,16 +45,24 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     socket.join(chatId);
   }
 
-  @SubscribeMessage('sendMessage')
-  async handleMessage(socket: Socket, data: { id: string, content: string }) { 
+  @SubscribeMessage("sendMessage")
+  async handleMessage(
+    socket: Socket,
+    data: { id: string; content: string; files?: any[] }
+  ) {
     const user = socket.data.user;
     if (!user) return;
 
-    // salva a mensagem no banco
-    const savedMessage = await this.chatService.sendMsg(data.content, data.id, user.id);
+    // salva a mensagem no banco 
+    const savedMessage = await this.chatService.sendMsg(
+      data.content,
+      data.id,
+      user.id,
+      data.files // se vier do frontend
+    );
 
     // envia para todos os usuários no chat
-    this.server.in(data.id).emit('message', savedMessage);
+    this.server.in(data.id).emit("message", savedMessage);
   }
 
   @SubscribeMessage('readMessage')

@@ -22,23 +22,26 @@ import {
 } from "@/components/ui/select"
 import CreateCommitmentDialog from "@/components/CreateCommitmentDialog";
 import SidebarActions from "@/components/SidebarActions";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getCommitments } from "@/lib/api/commitments";
 import { toast } from "sonner";
 
 export default function Commitments() {
-  const fetchCommitments = async () => { 
-    const commitments = await getCommitments()
-    return commitments
+  const [ commitments, setCommitments ] = useState<any[]>([])
+
+  const fetchData = async () => {
+    try {
+      const commitments = await getCommitments()
+      setCommitments(commitments)
+      console.log(commitments)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
-useEffect(() => { 
-  try {
-    console.log(fetchCommitments())
-  } catch (e) {
-    console.log(e)
-  }
-})
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <SidebarProvider>
@@ -83,7 +86,7 @@ useEffect(() => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <CreateCommitmentDialog />
+            <CreateCommitmentDialog onCreated={fetchData} />
           </div>
           <div className="w-full border border-[#15151e] p-2 rounded-[10px]">
             <Table className="max-w-full w-full">
@@ -96,25 +99,22 @@ useEffect(() => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableCommitments
-                  client="penis"
-                  commitment="Muito tenis no rabo"
-                  date="12/12/25"
-                  status="pending"
-                />
-                <TableCommitments
-                  client="penis"
-                  commitment="Muito tenis no rabo"
-                  date="12/12/25"
-                  status="completed"
-                />
-                <TableCommitments
-                  client="penis"
-                  commitment="Muito tenis no rabo"
-                  date="12/12/25"
-                  status="cancelled"
-                />
+                {commitments.map(commitment => {
+                  return (
+                    <TableCommitments
+                      key={commitment.id}
+                      fetchData = { fetchData }
+                      commitmentId = {commitment.id}
+                      email= {commitment.client_email}
+                      client={commitment.client_name}
+                      commitment={commitment.title}
+                      date={commitment.dueDate}
+                      status={commitment.status}
+                    />
+                  )
+                })}
               </TableBody>
+
             </Table>
           </div>
         </div>

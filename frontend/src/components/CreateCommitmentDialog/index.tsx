@@ -14,10 +14,10 @@ import { Calendar } from "@/components/ui/calendar"
 import { useState } from "react";
 import { pt } from "date-fns/locale"
 import { IoAdd } from "react-icons/io5";
-import { createCommitment } from "@/lib/api/commitments";
+import { createCommitment, getCommitments } from "@/lib/api/commitments";
 import { toast } from "sonner";
 
-export default function CreateCommitmentDialog() {
+export default function CreateCommitmentDialog({ onCreated }: { onCreated?: () => void }) {
     const [ date, setDate ] = useState<Date>()
     const [ email, setEmail ] = useState('')
     const [ title, setTitle ] = useState('')
@@ -26,11 +26,13 @@ export default function CreateCommitmentDialog() {
     const handleCommitment = async (e: React.FormEvent) => { 
         e.preventDefault()
         try {
-            const commitment = await createCommitment(email, title, date)
-            toast.success(`Compromisso para o dia ${date} criado com sucesso`)
+            await createCommitment(email, title, date)
+            toast.success(`Compromisso para o dia ${date?.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })} criado com sucesso`)
             setTitle('')
             setDate(undefined)
             setEmail('')
+            setOpen(false)
+            if (onCreated) onCreated()
         } catch (e:any) {
             toast.error(e.message)
         }

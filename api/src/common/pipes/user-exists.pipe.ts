@@ -6,6 +6,7 @@ export class UserExistsPipe implements PipeTransform {
   constructor( private readonly userService: UserService){}
   async transform(identifier: string, metadata: ArgumentMetadata) {
     const user = await this.userService.readOne(identifier)
+    console.log(identifier)
     if(!user) throw new NotFoundException("Este usuário não existe.")
     return user
   }

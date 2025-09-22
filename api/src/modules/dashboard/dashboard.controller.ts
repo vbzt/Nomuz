@@ -40,7 +40,7 @@ export class DashboardController {
   async editCommitment(
     @Param('id', ParseCUIDPipe) id: string, 
     @Body() data: EditCommitmentDTO, 
-    @Body("clientEmail", UserExistsPipe) client?: User
+    @Body("email", UserExistsPipe) client?: User
     ){ 
     if(client) return this.dashboardService.editCommitment(id, data, client)
     return this.dashboardService.editCommitment(id, data)

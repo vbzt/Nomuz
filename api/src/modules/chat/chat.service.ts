@@ -9,10 +9,13 @@ import { CreateGroupDTO } from './dto/create-group.dto';
 import { CHAT_ROLE } from 'src/common/enums/chat-role.enum';
 import { UpdateGroupDTO } from './dto/update-group.dto';
 import { defaultProfilePicture } from 'src/common/constants/profile-picture';
+import { FileService } from '../file/file.service';
+import { url } from 'inspector';
+import path from 'path';
 
 @Injectable()
 export class ChatService {
-  constructor(private readonly prismaService: PrismaService){ }
+  constructor(private readonly prismaService: PrismaService, private readonly fileService: FileService){ }
 
   // messages 
  async loadChats(userId: string) {
@@ -60,9 +63,33 @@ export class ChatService {
 
   async sendMsg(content: string,  chatId: string, userId: string, files?: Array<Express.Multer.File>,){ 
     const encryptedMessage = this.encryptMsg(content)
-    await this.chatExists(chatId)
-    const savedMessage = await this.prismaService.message.create({ data: { content: encryptedMessage, hash: this.generateMessageHash(chatId, userId, encryptedMessage), chat_id: chatId, sender_id: userId} } )
+
+    await this.chatExists(chatId);
+
+    const fileMetas = files?.length ? await this.fileService.uploadMany(files) : [];
+
+    const savedMessage = await this.prismaService.message.create({
+      data: {
+        content: encryptedMessage,
+        hash: this.generateMessageHash(chatId, userId, encryptedMessage),
+        chat_id: chatId,
+        sender_id: userId,
+        files: {
+          create: fileMetas.map((f) => ({
+            name: f.name,
+            type: f.type,
+            url: f.url,
+            size: f.size,
+          })),
+        },
+      },
+      include: {
+        files: true, 
+      },
+    })
+
     savedMessage.content = content
+
     return { success: true, message: 'Mensagem enviada com sucesso', data: savedMessage }
   }
 

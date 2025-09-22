@@ -91,25 +91,52 @@ export default function Interactions() {
      })
   }
 
-  const sendMessage = () => { 
-    if (!newMessage.trim() || !params?.id || !socketRef.current || !user?.id) return
+    const sendMessage = async () => {
+    if (!newMessage.trim() || !params?.id || !socketRef.current || !user?.id) return;
+
+    const fileInput = document.getElementById("fileInput") as HTMLInputElement;
+    const file = fileInput?.files?.[0];
+
+    let fileMeta = undefined;
+    if (file) {
+      const formData = new FormData();
+      formData.append("files", file);
+      const res = await fetch(`/chats/${params.id}/messages`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!data.success) {
+        toast.error("Erro ao enviar arquivo");
+        return;
+      }
+      fileMeta = data.data.files
+    }
+
     socketRef.current.emit(
-      'sendMessage',
-      { id: params?.id , content: newMessage },
+      "sendMessage",
+      {
+        id: params.id,
+        content: newMessage,
+        files: fileMeta, 
+      },
       (res: { success: boolean; message: string; data: Message }) => {
-        if(res.success && res.data){
-          const msg = res.data
+        if (res.success && res.data) {
+          const msg = res.data;
           setMessages(prev => {
-            const newMessages = [...prev, msg]
-            messagesRef.current = newMessages
-            return newMessages
-          })
-          setReadReceipts(prev => ({ ...prev, [msg.id]: 'Sent' }))
+            const newMessages = [...prev, msg];
+            messagesRef.current = newMessages;
+            return newMessages;
+          });
+          setReadReceipts(prev => ({ ...prev, [msg.id]: "Sent" }));
         }
       }
-    )
-    setNewMessage('')
-  }
+    );
+
+    setNewMessage("");
+    if (fileInput) fileInput.value = "";
+  };
 
   useEffect(() => {
     if (params?.id) fetchChats()
@@ -182,7 +209,23 @@ export default function Interactions() {
                   onKeyDown={e => e.key === 'Enter' && sendMessage()}
                   className="text-[15px] flex-1 h-[40px] w-full bg-[#15151e] transition duration-[0.2s] ease-in-out border border-[#272727] rounded-[10px] px-[16px] py-[8px] text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#36577d]"
                 />
-                <button className="h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
+                <input
+                  type="file"
+                  id="fileInput"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      console.log("Arquivo selecionado:", file)
+                    }
+                  }}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("fileInput")?.click()}
+                  className="h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out"
+                >
                   <TbPaperclip />
                 </button>
                 <button onClick={sendMessage} className="h-[40px] bg-[#36577d] hover:bg-[#254161] transition duration-[0.2s] cursor-pointer ease-in-out text-white px-[11px] py-[10px] rounded-[10px] font-semibold">

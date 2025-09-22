@@ -13,6 +13,6 @@ export async function getChats() {
   return apiFetch('/chats', { method: "GET"})
 }
 
-export async function sendMessage(chatId: string,){ 
-  return apiFetch(`/chats/${chatId}`)
+export async function sendMessage(chatId: string, file?: File){ 
+  return apiFetch(`/chats/${chatId}/messages`, { method: 'POST'})
 } 

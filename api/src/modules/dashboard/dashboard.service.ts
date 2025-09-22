@@ -49,7 +49,7 @@ export class DashboardService {
 }
 
 async createCommitment(req: AuthenticatedRequest, client: User, data: CreateCommitmentDTO){ 
-  const commitment = await this.prismaService.commitment.create( { data: { dueDate: data.dueDate, title: data.title ,  client_id: client.id, user_id: req.user.id, client_name: client.name } } )
+  const commitment = await this.prismaService.commitment.create( { data: { dueDate: data.dueDate, title: data.title ,  client_id: client.id, user_id: req.user.id, client_name: client.name, client_email: client.email } } )
   return { message: "Compromisso criado com sucesso.", commitment}
 }
 
@@ -58,7 +58,8 @@ async getCommitments(req: AuthenticatedRequest){
 }
 
 async editCommitment(id: string, data: EditCommitmentDTO, client?: User){
-  const updatedCommitment = await this.prismaService.commitment.update( { where: { id }, data: { ...data, ...(client && { client_id: client.id, client_name: client.name } ) } } )
+ const { email, ...filter } = data;
+  const updatedCommitment = await this.prismaService.commitment.update( { where: { id }, data: { ...filter, ...(client && { client_id: client.id, client_name: client.name, client_email: client.email } ) } } )
   return { message: "Compromisso atualizado com sucesso.", updatedCommitment }
 } 
 
