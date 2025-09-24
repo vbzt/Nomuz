@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select"
 import CreateGroupDialog from "@/components/CreateGroupDialog"
 import CreatePrivateDialog from "@/components/CreatePrivateChatDialog"
-import ContentGroupUser from "@/components/ContentGroupUser"
+import ContentMessageUser from "@/components/ContentMessageUser"
 import { useEffect, useState, useRef, useCallback } from "react"
 import { getChats } from "@/lib/api/chat"
 import { useAuth } from "../../../../context/AuthContext"
@@ -116,7 +116,7 @@ export default function Interactions() {
               : lastMessage ? lastMessage.content : ""
             const otherUser = !chat.isGroup ? chat.users.find((u: any) => u.user.id !== user!.id)?.user : null
             return (
-              <ContentGroupUser
+              <ContentMessageUser
                 key={chat.id}
                 name_group={chat.name || (otherUser ? otherUser.name : '')}
                 content_preview={contentPreview}
