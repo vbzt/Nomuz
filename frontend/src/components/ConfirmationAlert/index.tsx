@@ -14,9 +14,10 @@ interface ConfirmationProps {
     title: string,
     desc: string,
     btn: React.ReactNode
+    onConfirm: () => void
 }
 
-export default function ConfirmationAlert({ title, desc, btn }: ConfirmationProps) {
+export default function ConfirmationAlert({ title, desc, btn, onConfirm }: ConfirmationProps) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -29,7 +30,7 @@ export default function ConfirmationAlert({ title, desc, btn }: ConfirmationProp
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel className="h-[35px] bg-[#0c0c13] border border-[#15151e] hover:bg-[#ffffff0a]">Cancelar</AlertDialogCancel>
-                    <AlertDialogAction className="h-[35px] bg-[#36577d] hover:bg-[#254161]">Confirmar</AlertDialogAction>
+                    <AlertDialogAction onClick={onConfirm} className="h-[35px] bg-[#36577d] hover:bg-[#254161]">Confirmar</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

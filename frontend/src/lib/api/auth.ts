@@ -31,3 +31,12 @@ export async function forgotPassword ( email: string ){
 export async function resetPassword ( resetToken: string, data: { email: string, password: string, confirmPassword: string } ){ 
   return apiFetch(`/auth/reset/${resetToken}`, { method: "PATCH", body: JSON.stringify( { ...data } ) } )
 }
+
+export async function updateProfile(data?: { email?: string, name?: string }, file?: File) {
+  const formData = new FormData()
+  if(data?.email) formData.append("email", data.email)
+  if(data?.name) formData.append("name", data.name)
+  if(file) formData.append("file", file)
+  const res = await apiFetch('/auth/profile', { method: 'PATCH', body: formData })
+  return res
+}

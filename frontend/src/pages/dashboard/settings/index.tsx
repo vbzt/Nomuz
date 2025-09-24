@@ -6,9 +6,42 @@ import { TbCheck } from "react-icons/tb";
 import ConfirmationAlert from "@/components/ConfirmationAlert";
 import SidebarActions from "@/components/SidebarActions";
 import { useAuth } from "../../../../context/AuthContext";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { updateProfile } from "@/lib/api/auth";
 
 export default function Settings() {
-    const { user } = useAuth()
+    const { user, refreshUser } = useAuth()
+    const [ name, setName ] = useState('')
+    const [ email, setEmail ] = useState('')
+
+    const handleNameChange = async () => {
+        try {
+            const res: any = await updateProfile({ name })
+            await refreshUser()
+            toast.success(res.message)
+        } catch (e:any ) {
+            toast.error(e.message)
+        }
+    }
+
+    const handleEmailChange = async () => {
+       try {
+            const res: any = await updateProfile({ email })
+            await refreshUser()
+            toast.success(res.message)
+        } catch (e:any ) {
+            toast.error(e.message)
+        }
+    }
+
+    useEffect( () => { 
+    if (user) {
+        setName(user.name)
+        setEmail(user.email)
+    }
+
+    }, [user])
 
     return (
         <SidebarProvider>
@@ -25,25 +58,28 @@ export default function Settings() {
                         <label htmlFor="inputImage">
                             <img  className="rounded-full h-[80px] w-[80px] border borde-[#15151e] transition duration-[0.2s] cursor-pointer ease-in-out p-[6px] mb-[20px] hover:bg-[#ffffff0a] hover:brightness-60 hover:border-[#21212b]" src= { user?.profilePicture} alt="" />
                         </label>
-                        <input type="file" id="inputImage" className="hidden" />
-                        <form className="w-full">
+                        <form><input type="file" accept="image/png, image/jpeg" id="inputImage" className="hidden" /></form>
+                        
+                        <form onSubmit={(e: React.FormEvent) => e.preventDefault()} className="w-full">
                             <h1 className="text-[#b3b3b3] font-semibold text-[12px] mb-[10px]">Nome de usuário</h1>
                             <div className="flex flex-row items-center justify-center mb-[20px]">
-                                <Input value={user?.name} required type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13] h-9" />
+                                <Input value={name} onChange={(e) => setName(e.target.value)} required type="text" id="name" placeholder="Seu Nome de Usuário" className="bg-[#0c0c13] h-9" />
                                 <ConfirmationAlert
                                     title="Deseja mesmo alterar o nome de usuário?"
                                     desc="Essa ação fará com que seu nome de usuário seja alterado, você poderá alterar novamente mais tarde."
+                                    onConfirm={handleNameChange}
                                     btn={<Button className="bg-[#36577d] hover:bg-[#254161] w-9 h-9 ml-[10px]"><TbCheck /></Button>}
                                 />
                             </div>
                         </form>
-                        <form className="w-full">
+                        <form onSubmit={(e: React.FormEvent) => e.preventDefault()} className="w-full">
                             <h1 className="text-[#b3b3b3] font-semibold text-[12px] mb-[10px]">E-mail</h1>
                             <div className="flex flex-row">
-                                <Input value={user?.email} required type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13] mb-[0px] h-9" />
+                                <Input value={email} onChange={(e) => setEmail(e.target.value)} required type="email" id="email" placeholder="seuemail@email.com" className="bg-[#0c0c13] mb-[0px] h-9" />
                                 <ConfirmationAlert
                                     title="Deseja mesmo alterar seu E-mail?"
                                     desc="Essa ação fará com que seu e-mail de usuário seja alterado, você poderá alterar novamente mais tarde."
+                                    onConfirm={handleEmailChange}
                                     btn={<Button className="bg-[#36577d] hover:bg-[#254161] w-9 h-9 ml-[10px]"><TbCheck /></Button>}
                                 />
                             </div>

@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt'
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { FileService } from '../file/file.service';
 import { defaultProfilePicture } from 'src/common/constants/profile-picture';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -50,19 +51,24 @@ export class UserService {
     })
   
     return user
-  }
+  } 
 
 
   async update(data: UpdateUserDTO, id: string, file?: Express.Multer.File){ 
     
-    if( data!.password ){ 
+    if( data.password ){ 
       const salt = await bcrypt.genSalt() 
       data.password = await bcrypt.hash( data.password, salt )
-      const user = await this.prismaService.user.update( { where: { id },  data: { ...data } , omit: { password: true }} )
-    return { message: "Usuário atualizado com sucesso.", user }
     }
-    const user = await this.prismaService.user.update( { where: { id }, data: { ...data }, omit: { password: true }})
-    return { message: "Usuário atualizado com sucesso.", user}
+    let profilePicture
+    if(file){ 
+      profilePicture = await this.fileService.upload(file)
+    }
+
+
+    const user = await this.prismaService.user.update( { where: { id }, data: { ...data, ...(profilePicture && { profilePicture }) }, omit: { password: true }})
+    const safeUser: Omit<User, "password"> = user
+    return { message: "Usuário atualizado com sucesso.", user: safeUser}
   }
 
   async delete(id: string){ 

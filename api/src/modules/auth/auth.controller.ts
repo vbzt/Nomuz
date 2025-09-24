@@ -8,11 +8,14 @@ import { Request, Response } from 'express';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ParseCUIDPipe } from 'src/common/pipes/parse-cuid.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserService } from '../user/user.service';
+import { UpdateProfile } from './dto/update-profile.dto';
+import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 
 @Controller('auth')
 export class AuthController {
 
-  constructor( private readonly authService: AuthService ){ }
+  constructor( private readonly authService: AuthService, private readonly userService: UserService ){ }
    
   @UseInterceptors(FileInterceptor('file'))
   @Post('/register')
@@ -52,4 +55,14 @@ export class AuthController {
   getProfile(@Req() req: Request){ 
     return req.user
   }
+  
+  @UseInterceptors(FileInterceptor('file'))
+  @UseGuards(AuthGuard)
+  @Patch('/profile')
+  async updateProfile(@Body() data: UpdateProfile, @Req() req: AuthenticatedRequest, @Res() res: Response, file?: Express.Multer.File){
+    const updatedUser = await this.authService.updateProfile(data, req, file)
+    res.cookie( 'jwt', updatedUser.token, { httpOnly: true, secure: false, sameSite: 'lax' } )
+    return res.json(updatedUser)
+  }
+
 }

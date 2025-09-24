@@ -13,6 +13,8 @@ import { Resend } from 'resend';
 import { ResetPasswordEmailDTO } from './dto/reset-password-email.dto';
 import { renderTemplate } from 'src/common/utils/renderTemplate';
 import { ResetPasswordDTO } from './dto/reset-password.dto';
+import { UpdateProfile } from './dto/update-profile.dto';
+import { AuthenticatedRequest } from 'src/common/interfaces/authenticated-session.interface';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +25,7 @@ export class AuthService {
     @InjectResend() private readonly resendClient: Resend
     ){} 
 
-    createJwtToken( user: User ){ 
+    createJwtToken( user: Omit<User, "password"> ){ 
       const token = this.JWTService.sign( 
         { id: user.id, name: user.name, email: user.email, profilePicture: user.profilePicture },
         { 
@@ -89,6 +91,11 @@ export class AuthService {
       await this.resendClient.emails.send( { from: 'Acme <onboarding@resend.dev>', to: data.email, subject: `Intruções para a troca de senha da conta ${data.email}`, html} )
     } 
 
+    async updateProfile( data: UpdateProfile, req:AuthenticatedRequest, file?: Express.Multer.File){
+      const updatedUser = await this.userService.update(data, req.user.id, file)
+      const token = this.createJwtToken(updatedUser.user)
+      return { message: updatedUser.message, token }
+    }
 
    async resetPassword(data: ResetPasswordDTO, token: string){ 
     const tokenInfo = await this.prismaService.resetPasswordToken.findUnique( { where: { token } } )
