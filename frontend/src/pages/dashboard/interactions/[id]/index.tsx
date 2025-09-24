@@ -132,7 +132,7 @@ export default function Interactions() {
           const ctx = canvas.getContext("2d")
           if (!ctx) throw new Error("Canvas not supported");
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          canvas.toBlob((blob) => { 
+          canvas.toBlob((blob) => {
             if (!blob) {
               URL.revokeObjectURL(url);
               reject(new Error("Não foi possível gerar thumbnail"));
@@ -186,7 +186,7 @@ export default function Interactions() {
         if (p.id === id && p.preview) {
           try {
             URL.revokeObjectURL(p.preview);
-          } catch {}
+          } catch { }
         }
       });
       return prev.filter((p) => p.id !== id);
@@ -217,7 +217,7 @@ export default function Interactions() {
       "sendMessage",
       {
         id: params.id,
-        content: newMessage ||  "",
+        content: newMessage || "",
         files: fileMeta,
       },
       (res: { success: boolean; message: string; data: Message }) => {
@@ -264,34 +264,34 @@ export default function Interactions() {
         <div className="p-[10px] border-r border-[#15151e] min-h-full">
           <SidebarActions />
         </div>
-        <div className="flex items-start justify-center flex-col p-[20px] w-full">
-          <main className="py-[15px] min-h-[calc(100vh-65px)] flex flex-col items-center w-full">
-            <div className="flex items-center justify-between flex-col max-w-[1000px] w-[90%] h-full flex-1">
-              <div className="w-full border border-[#15151e] flex items-center justify-between rounded-[8px] p-2">
+        <div className="flex items-start justify-center flex-col p-[20px] w-full h-[100vh]">
+          <main className="flex flex-col items-center w-full h-full">
+            <div className="flex items-center justify-between flex-col w-full h-full flex-1">
+              <div className="w-full border border-[#15151e] mb-4 flex items-center justify-between rounded-[8px] p-2">
                 <div className="flex flex-row items-center justify-center">
                   <img src={receiver?.user.profilePicture} width={40} height={40} alt="Image user" className="h-[40px] w-[40px] rounded-[5px] mr-[10px]" />
                   <h1>{receiver?.user_name}</h1>
                 </div>
-                <div>
-                  <button onClick={() => router.push("/dashboard/interactions")} className="h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
+                <div className="flex items-center justify-center flex-row">
+                  <button onClick={() => router.push("/dashboard/interactions")} className="hidden md:block h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
                     <TbArrowLeft />
                   </button>
-                  <button className="ml-[10px] h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
+                  <button className="hidden md:block ml-[10px] h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
                     <TbSearch />
                   </button>
-                  <button className="ml-[10px] h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
+                  <button className="flex md:hidden ml-[10px] h-[40px] px-[11px] py-[10px] bg-[#0c0c13] border border-[#15151e] rounded-[10px] hover:bg-[#ffffff0a] transition duration-[0.2s] cursor-pointer ease-in-out">
                     <TbMenu />
                   </button>
                 </div>
               </div>
-              <div className="border bg-[#0c0c13] rounded-xl p-4 h-[400px] w-full overflow-y-auto mb-4 flex flex-col gap-2">
+              <div className="border rounded-xl p-4 h-full w-full overflow-y-auto mb-4 flex flex-col gap-2">
                 {messages.length === 0 && <p className="text-gray-500">Nenhuma mensagem ainda.</p>}
                 {messages.map((msg) => {
                   const isSender = msg.sender_id === user?.id;
                   const status = isSender ? readReceipts[msg.id] ?? "Sent" : undefined;
                   return (
                     <div key={msg.id} className={`flex ${isSender ? "justify-end" : "justify-start"} mb-2`}>
-                      <div className={`max-w-[70%] px-3 py-2 rounded-lg ${isSender ? "bg-[#36577d] text-white" : "bg-[#272727] text-gray-200"}`}>
+                      <div className={`max-w-[70%] px-3 py-2 rounded-lg ${isSender ? "bg-[#36577d] text-white" : "bg-[#36577d19] text-gray-200"}`}>
                         {!isSender && (
                           <div className="text-sm mb-1">
                             <strong className="text-[#4677af]">{receiver?.user_name}</strong>
