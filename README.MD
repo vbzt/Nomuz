@@ -1,244 +1,144 @@
-<div align="center">
-
 # Nomuz
 
-**Secure legal communication and case management platform**
-
-*Designed for confidentiality, real-time collaboration, and scalability.*
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
-
-[![Status](https://img.shields.io/badge/Status-Completed-22c55e?style=for-the-badge)]()
-[![Blockchain](https://img.shields.io/badge/Blockchain-Planned%20%2F%20Incomplete-f59e0b?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-Open%20Source-6366f1?style=for-the-badge)]()
-
-</div>
+A secure platform for legal communication and case management.
 
 ---
 
-## 📖 Overview
+## What it is
 
-Nomuz is a full-stack application that centralizes case management and communication between lawyers, clients, and associates in a secure environment tailored for the legal domain.
+Nomuz centralizes case management and communication between lawyers, clients, and associates in a secure environment. Built with TypeScript across the stack, it focuses on privacy, real-time interaction, and clean architecture.
 
-Built with a modern TypeScript stack, the platform focuses on **privacy**, **real-time interaction**, and **clean architecture** — exploring how modern web technologies can meet the strict requirements of the legal sector.
-
----
-
-## ✨ Key Features
-
-- 🔐 **End-to-end encrypted messaging** — confidential communication by design
-- ⚖️ **Legal case management** — centralized workspace for case tracking
-- 👥 **Multi-role system** — lawyers, clients, and associates each with distinct access
-- ⚡ **Real-time communication** — powered by WebSockets
-- 🧱 **Modular architecture** — clean separation of concerns across all layers
-- 🗄️ **Strongly typed database layer** — Prisma ORM with full TypeScript integration
-- 🎯 **Built for high-confidentiality environments** — security as a first-class concern
+The project explores how modern web technologies can meet the strict requirements of the legal sector — where confidentiality isn't optional and data integrity matters.
 
 ---
 
-## 🏗️ Architecture
-
-Nomuz is structured as a modular monorepo with clear layer separation:
+## Architecture
 
 ```
 Nomuz/
-├── api/          # NestJS backend — business logic, auth, database access, WebSockets
-├── blockchain/   # Planned on-chain layer for message anchoring and integrity (incomplete)
-└── frontend/     # Next.js client — UI, routing, client-side integration
+├── api/          NestJS backend
+├── blockchain/   Planned integrity layer (incomplete)
+└── frontend/     Next.js client
 ```
 
-### Backend
-- **NestJS** — modular, scalable framework with dependency injection
-- **Prisma ORM** — strongly typed schema and database access
-- **PostgreSQL** — relational data persistence
-- **WebSockets** — real-time bidirectional communication
-- **E2E encryption flow** — message confidentiality at the application layer
+**Backend**  
+NestJS · Prisma ORM · PostgreSQL · WebSockets
 
-### Frontend
-- **Next.js** — React framework with SSR and file-based routing
-- **shadcn/ui** — accessible and composable component library
-- **TypeScript** — end-to-end type safety across the stack
+**Frontend**  
+Next.js · shadcn/ui · TypeScript
 
-### Blockchain *(Planned Layer)*
-
-The blockchain integration was designed to:
-- Anchor message hashes on-chain for tamper-proof integrity
-- Provide verifiable audit trails for legal communications
-- Enhance trust through decentralized message validation
-
-> ⚠️ **Not finalized** — the blockchain layer was not completed due to infrastructure and time constraints. The project was concluded and delivered without it, but the system was architected with this extension in mind.
+**Security**  
+End-to-end encrypted messaging · Role-based access control
 
 ---
 
-## 📊 Technical Metrics
+## Features
 
-| Layer | Pattern | Key Technologies |
-|---|---|---|
-| API | Layered (Controller → Service → Repository) | NestJS, Prisma, PostgreSQL |
-| Realtime | Event-driven | WebSockets (Socket.io) |
-| Frontend | Component-driven | Next.js, shadcn/ui |
-| Security | E2E encryption + role-based access | Custom encryption flow |
-| Database | Schema-first, strongly typed | Prisma ORM |
-| Monorepo | Module separation by domain | TypeScript throughout |
+- Encrypted messaging between lawyers, clients, and associates
+- Legal case management with role-specific access
+- Real-time communication via WebSockets
+- Modular architecture with clear separation of concerns
+- Strongly typed database layer with Prisma
 
 ---
 
-## 🛠️ Tech Stack
+## Tech decisions
 
-| Area | Stack |
-|---|---|
-| Language | TypeScript |
-| Backend | NestJS · Prisma ORM · PostgreSQL · WebSockets |
-| Frontend | Next.js · shadcn/ui |
-| Security | End-to-End Encryption · Role-based access control |
-| Architecture | Modular Monorepo · Layered pattern · Clean separation of concerns |
+**Why NestJS?**  
+Modular structure with dependency injection made it easier to maintain clean boundaries between domains (auth, cases, messaging).
+
+**Why E2E encryption?**  
+Legal communications can't be exposed. Messages are encrypted client-side — the server never sees plaintext.
+
+**Why WebSockets?**  
+Real-time delivery matters in legal contexts. REST alone wouldn't cut it for instant notifications and live updates.
+
+**Why Prisma?**  
+Type-safe queries and migrations kept the data layer predictable. The schema-first approach made collaboration easier.
 
 ---
 
-## 🚀 Getting Started
+## The blockchain layer
 
-### Prerequisites
+The original plan included on-chain message anchoring for tamper-proof audit trails. The architecture was designed with this in mind, but the infrastructure requirements (node setup, gas management, smart contracts) pushed it out of scope.
 
+The system was delivered without it. The extension point remains if needed later.
+
+---
+
+## What I learned
+
+**E2E encryption in a REST + WebSocket environment**  
+Designing an encryption flow that works across both HTTP and WebSocket channels required careful key management. The main challenge was ensuring only the intended recipient could decrypt messages, without the server holding plaintext.
+
+**Real-time architecture with NestJS**  
+Integrating WebSockets into NestJS while keeping it modular was non-trivial. Gateways had to be scoped properly, and the event system needed to integrate with services without creating circular dependencies.
+
+**Monorepo without tooling**  
+Managing shared types and utilities across `api`, `frontend`, and `blockchain` without Turborepo or nx required discipline. It taught me the importance of enforcing boundaries early.
+
+**Knowing when to stop**  
+The blockchain layer was ambitious but introduced complexity beyond the project timeline. I learned to architect with extension points in mind, but also to ship without features when needed.
+
+---
+
+## Running it
+
+**Prerequisites**
 - Node.js 18+
-- npm or yarn
-- PostgreSQL instance running
+- PostgreSQL
 
-### Installation
+**Setup**
 
 ```bash
 git clone https://github.com/vbzt/Nomuz.git
 cd Nomuz
-```
 
-Install dependencies for each module:
-
-```bash
-# API
+# Install dependencies
 cd api && npm install
-
-# Blockchain
-cd ../blockchain && npm install
-
-# Frontend
 cd ../frontend && npm install
 ```
 
-### Environment Variables
+**Environment**
 
-Create a `.env` file inside the `api/` folder:
+Create `api/.env`:
 
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/nomuz"
 JWT_SECRET="your_secret_here"
 ```
 
-### Running the Project
+**Start**
 
 ```bash
-# Start backend
-cd api
-npm run dev
+# Backend
+cd api && npm run dev
 
-# Start frontend
-cd frontend
-npm run dev
+# Frontend
+cd frontend && npm run dev
 ```
 
 ---
 
-## 🧩 API Highlights
+## Team
 
-- **Authentication** — JWT-based auth with role-aware guards
-- **Case Management** — full CRUD for legal cases, linked to users and associates
-- **Messaging** — encrypted message persistence with real-time delivery via WebSockets
-- **Role System** — distinct access levels for `lawyer`, `client`, and `associate`
-- **Modular NestJS structure** — each domain is an isolated, testable module
+**Backend** — [@vbzt](https://github.com/vbzt)  
+API architecture · Prisma modeling · WebSockets · Encryption flow
 
----
-
-## ⚔️ Challenges & Learnings
-
-### 🔐 Implementing E2E Encryption in a REST + WebSocket environment
-Designing an encryption flow that works consistently across both HTTP and WebSocket channels required careful key management and a shared encryption contract between backend and frontend. The main challenge was ensuring messages could only be decrypted by the intended recipient, without the server ever holding plaintext.
-
-**Learned:** How to structure an E2E encryption layer in a full-stack TypeScript app, and the trade-offs between server-side and client-side decryption.
+**Frontend** — [@vhnb](https://github.com/vhnb)  
+UI implementation · Component architecture · Client integration
 
 ---
 
-### ⚡ Real-time architecture with NestJS + WebSockets
-Integrating WebSockets into a modular NestJS architecture while keeping it clean and maintainable was non-trivial. Gateways had to be properly scoped, and the event system needed to integrate with the existing service layer without creating circular dependencies.
+## Why this matters
 
-**Learned:** NestJS gateway lifecycle, event namespacing, and how to keep real-time logic decoupled from business logic.
+Legal communication demands care:
+- Messages can't be intercepted or tampered with
+- Case records must be auditable
+- Delays in communication can have legal consequences
 
----
-
-### 🧱 Monorepo structure and cross-module concerns
-Managing shared types, contracts, and utilities across `api`, `frontend`, and `blockchain` folders without a dedicated package manager (like Turborepo or nx) required discipline and clear conventions.
-
-**Learned:** The importance of enforcing boundaries early, and what a proper monorepo setup would look like at scale.
+Nomuz is a technical exploration of how a modern TypeScript stack can meet these requirements with a secure-by-design approach.
 
 ---
 
-### ⛓️ Blockchain layer — knowing when to stop
-The blockchain layer was designed with ambition — on-chain message anchoring for tamper-proof legal records. However, the required infrastructure (node setup, gas management, smart contract deployment) introduced complexity that was out of scope for the project timeline.
-
-**Learned:** How to architect a system with extension points in mind, and how to make the pragmatic call to ship without a feature rather than delay delivery indefinitely.
-
----
-
-## 🎯 Project Goals
-
-Nomuz was created to explore:
-- Secure communication in the legal sector
-- Real-time systems with WebSockets
-- End-to-end encryption workflows
-- Scalable backend architecture with NestJS
-- Clean separation of concerns in a full-stack TypeScript environment
-
----
-
-## 👨‍💻 Team
-
-<table>
-  <tr>
-    <td align="center">
-      <strong>🔧 Backend Developer</strong><br/>
-      <a href="https://github.com/vbzt">@vbzt</a><br/>
-      <sub>API architecture · Prisma modeling · WebSockets · Encryption flow · Modular service structure</sub>
-    </td>
-    <td align="center">
-      <strong>🎨 Frontend Developer</strong><br/>
-      <a href="https://github.com/vhnb">@vhnb</a><br/>
-      <sub>UI implementation · Component architecture · Client-side integration</sub>
-    </td>
-  </tr>
-</table>
-
----
-
-## 📌 Why This Project Matters
-
-Legal communication demands a level of care that most platforms don't provide:
-
-- **Confidentiality** — messages cannot be exposed, intercepted, or tampered with
-- **Data integrity** — case records must be trustworthy and auditable
-- **Reliable real-time interaction** — delays in communication can have real legal consequences
-
-Nomuz is a technical exploration of how a modern TypeScript stack can meet these requirements with a **secure-by-design** approach — without sacrificing developer experience or scalability.
-
----
-
-## 📄 License
-
-This project is open source and available for study and contributions.
-
----
-
-<div align="center">
-  <sub>Built with TypeScript, care, and a lot of encrypted messages. ⚖️</sub>
-</div>
+Built with TypeScript and a lot of encrypted messages.
